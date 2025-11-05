@@ -26,15 +26,42 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        
+        // Update other fields first (exclude avatar from mass assignment)
+        $data = $request->validated();
+        unset($data['avatar']); // Remove avatar from validated data
+        
+        $user->fill($data);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+        
+        // Handle avatar upload
+        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
+            $avatar = $request->file('avatar');
+            
+            // Delete old avatar if exists
+            if ($user->avatar && file_exists(public_path($user->avatar))) {
+                @unlink(public_path($user->avatar));
+            }
+            
+            // Generate unique filename
+            $avatarName = time() . '_' . $user->id . '.' . $avatar->getClientOriginalExtension();
+            
+            // Move file to public/uploads/avatars
+            try {
+                $avatar->move(public_path('uploads/avatars'), $avatarName);
+                $user->avatar = 'uploads/avatars/' . $avatarName;
+            } catch (\Exception $e) {
+                return Redirect::route('profile.edit')->with('error', 'Failed to upload avatar. Please try again.');
+            }
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('cloudbox.user.profile')->with('status', 'profile-updated');
     }
 
     /**

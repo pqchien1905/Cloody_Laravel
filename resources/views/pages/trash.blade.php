@@ -53,12 +53,13 @@
                                 </select>
                             </div>
                             <div class="col-md-3 mb-2">
-                                <select class="form-control" name="type" onchange="this.form.submit()">
+                                <select class="form-control" name="category" onchange="this.form.submit()">
                                     <option value="">All Types</option>
-                                    <option value="documents" {{ request('type') == 'documents' ? 'selected' : '' }}>Documents</option>
-                                    <option value="images" {{ request('type') == 'images' ? 'selected' : '' }}>Images</option>
-                                    <option value="videos" {{ request('type') == 'videos' ? 'selected' : '' }}>Videos</option>
-                                    <option value="audio" {{ request('type') == 'audio' ? 'selected' : '' }}>Audio</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-2 mb-2">

@@ -4,14 +4,37 @@
 
 @section('content')
 <div class="container-fluid">
+    @if(session('status'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @if(session('status') == 'profile-updated')
+                Profile updated successfully!
+            @elseif(session('status') == 'password-updated')
+                Password updated successfully!
+            @endif
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+    
     <div class="row">
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-body text-center">
-                    <img src="{{ Auth::user()->avatar ?? asset('assets/images/user/1.jpg') }}" alt="profile-img" class="avatar-130 img-fluid rounded-circle">
+                    <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('assets/images/user/1.jpg') }}" alt="profile-img" class="avatar-130 img-fluid rounded-circle">
                     <h4 class="mb-2 mt-3">{{ Auth::user()->name }}</h4>
                     <p class="mb-2">{{ Auth::user()->email }}</p>
+                    @if(Auth::user()->phone)
+                        <p class="mb-2"><i class="las la-phone mr-1"></i>{{ Auth::user()->phone }}</p>
+                    @endif
+                    @if(Auth::user()->address)
+                        <p class="mb-2 text-muted"><i class="las la-map-marker mr-1"></i>{{ Str::limit(Auth::user()->address, 50) }}</p>
+                    @endif
                     <p class="text-muted">Member since {{ Auth::user()->created_at->format('M Y') }}</p>
+                    <p class="mb-2"><strong>{{ $totalFiles }}</strong> files • <strong>{{ $totalFolders }}</strong> folders</p>
+                    @if(Auth::user()->bio)
+                        <p class="mt-3 text-muted" style="font-size: 14px;">{{ Str::limit(Auth::user()->bio, 100) }}</p>
+                    @endif
                     <div class="mt-3">
                         <a href="{{ route('profile.edit') }}" class="btn btn-primary btn-sm">Edit Profile</a>
                         <a href="{{ route('cloudbox.dashboard') }}" class="btn btn-secondary btn-sm">Dashboard</a>
@@ -24,15 +47,15 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <p class="mb-2">Used: <strong>15.5 GB</strong> of 100 GB</p>
+                        <p class="mb-2">Used: <strong>{{ number_format($storageUsedGB, 2) }} GB</strong> of {{ $storageLimit }} GB</p>
                         <div class="progress">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 15.5%" aria-valuenow="15.5" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ number_format($storagePercent, 1) }}%" aria-valuenow="{{ $storagePercent }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li class="mb-2"><i class="ri-folder-line mr-2 text-primary"></i> Documents: 5.2 GB</li>
-                        <li class="mb-2"><i class="ri-image-line mr-2 text-success"></i> Photos: 8.3 GB</li>
-                        <li class="mb-2"><i class="ri-video-line mr-2 text-danger"></i> Videos: 2 GB</li>
+                        <li class="mb-2"><i class="ri-folder-line mr-2 text-primary"></i> Documents: {{ number_format($documentsGB, 2) }} GB</li>
+                        <li class="mb-2"><i class="ri-image-line mr-2 text-success"></i> Photos: {{ number_format($imagesGB, 2) }} GB</li>
+                        <li class="mb-2"><i class="ri-video-line mr-2 text-danger"></i> Videos: {{ number_format($videosGB, 2) }} GB</li>
                     </ul>
                 </div>
             </div>
@@ -59,6 +82,36 @@
                             {{ Auth::user()->email }}
                         </div>
                     </div>
+                    @if(Auth::user()->phone)
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Phone</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            {{ Auth::user()->phone }}
+                        </div>
+                    </div>
+                    @endif
+                    @if(Auth::user()->address)
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Address</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            {{ Auth::user()->address }}
+                        </div>
+                    </div>
+                    @endif
+                    @if(Auth::user()->bio)
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Bio</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            {{ Auth::user()->bio }}
+                        </div>
+                    </div>
+                    @endif
                     <div class="row mb-3">
                         <div class="col-sm-3">
                             <h6 class="mb-0">Joined</h6>
@@ -70,6 +123,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profile</a>
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#updatePasswordModal">Update Password</button>
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAccountModal">Delete Account</button>
                         </div>
                     </div>
                 </div>
@@ -79,32 +134,129 @@
                     <h4 class="card-title">Recent Activity</h4>
                 </div>
                 <div class="card-body">
+                    @if($recentFiles->count() > 0 || $recentFolders->count() > 0)
                     <div class="iq-timeline">
+                        @foreach($recentFiles as $file)
                         <div class="timeline-item">
-                            <div class="timeline-icon"><i class="ri-upload-line text-primary"></i></div>
+                            <div class="timeline-icon"><i class="ri-file-line text-primary"></i></div>
                             <div class="timeline-content">
-                                <h6>Uploaded 3 files</h6>
-                                <p class="text-muted mb-0">2 hours ago</p>
+                                <h6>Uploaded: {{ Str::limit($file->original_name, 30) }}</h6>
+                                <p class="text-muted mb-0">{{ $file->created_at->diffForHumans() }}</p>
                             </div>
                         </div>
+                        @endforeach
+                        @foreach($recentFolders as $folder)
                         <div class="timeline-item">
                             <div class="timeline-icon"><i class="ri-folder-add-line text-success"></i></div>
                             <div class="timeline-content">
-                                <h6>Created new folder "Projects"</h6>
-                                <p class="text-muted mb-0">1 day ago</p>
+                                <h6>Created folder: {{ $folder->name }}</h6>
+                                <p class="text-muted mb-0">{{ $folder->created_at->diffForHumans() }}</p>
                             </div>
                         </div>
-                        <div class="timeline-item">
-                            <div class="timeline-icon"><i class="ri-share-line text-info"></i></div>
-                            <div class="timeline-content">
-                                <h6>Shared document with team</h6>
-                                <p class="text-muted mb-0">3 days ago</p>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
+                    @else
+                    <p class="text-center text-muted py-4">No recent activity</p>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Update Password Modal -->
+<div class="modal fade" id="updatePasswordModal" tabindex="-1" role="dialog" aria-labelledby="updatePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePasswordModalLabel">Update Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('password.update') }}">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="current_password">Current Password</label>
+                        <input type="password" class="form-control @error('current_password', 'updatePassword') is-invalid @enderror" id="current_password" name="current_password" required>
+                        @error('current_password', 'updatePassword')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">New Password</label>
+                        <input type="password" class="form-control @error('password', 'updatePassword') is-invalid @enderror" id="password" name="password" required>
+                        @error('password', 'updatePassword')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password_confirmation">Confirm Password</label>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title text-white" id="deleteAccountModalLabel">Delete Account</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('profile.destroy') }}">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <i class="ri-error-warning-line mr-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone!
+                    </div>
+                    <p>Are you sure you want to delete your account? Once your account is deleted, all of its resources and data will be permanently deleted.</p>
+                    <p>Please enter your password to confirm you would like to permanently delete your account.</p>
+                    
+                    <div class="form-group">
+                        <label for="password_delete">Password</label>
+                        <input type="password" class="form-control @error('password', 'userDeletion') is-invalid @enderror" id="password_delete" name="password" required>
+                        @error('password', 'userDeletion')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    // Auto open password modal if there are password update errors
+    @if($errors->updatePassword->any())
+        $('#updatePasswordModal').modal('show');
+    @endif
+    
+    // Auto open delete account modal if there are user deletion errors
+    @if($errors->userDeletion->any())
+        $('#deleteAccountModal').modal('show');
+    @endif
+</script>
+@endpush

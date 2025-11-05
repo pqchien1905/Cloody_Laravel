@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use App\Models\Folder;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -24,21 +25,11 @@ class FileController extends Controller
             $query->where('folder_id', $request->folder_id);
         }
 
-    // Lọc theo loại
-        if ($request->has('type') && $request->type) {
-            switch ($request->type) {
-                case 'documents':
-                    $query->whereIn('extension', ['pdf', 'doc', 'docx', 'txt', 'xls', 'xlsx', 'ppt', 'pptx']);
-                    break;
-                case 'images':
-                    $query->whereIn('extension', ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']);
-                    break;
-                case 'videos':
-                    $query->whereIn('extension', ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv']);
-                    break;
-                case 'audio':
-                    $query->whereIn('extension', ['mp3', 'wav', 'ogg', 'wma']);
-                    break;
+    // Lọc theo category
+        if ($request->has('category') && $request->category) {
+            $category = Category::where('slug', $request->category)->where('is_active', true)->first();
+            if ($category && !empty($category->extensions)) {
+                $query->whereIn('extension', $category->extensions);
             }
         }
 
@@ -57,6 +48,9 @@ class FileController extends Controller
 
         $files = $query->paginate(20);
         $folders = Folder::where('user_id', Auth::id() ?? 1)->active()->root()->get();
+        
+        // Lấy danh sách categories active để hiển thị trong dropdown
+        $categories = Category::where('is_active', true)->orderBy('order')->get();
 
     // Thống kê
         $stats = [
@@ -66,7 +60,7 @@ class FileController extends Controller
             'favorites' => File::where('user_id', Auth::id() ?? 1)->where('is_favorite', true)->count(),
         ];
 
-        return view('pages.files', compact('files', 'folders', 'stats'));
+        return view('pages.files', compact('files', 'folders', 'categories', 'stats'));
     }
 
     /**
@@ -148,8 +142,8 @@ class FileController extends Controller
         $userId = Auth::id() ?? 1;
     $days = 30; // Các file/thư mục gần đây trong 30 ngày gần nhất
         
-    // Lọc theo loại
-        $type = $request->get('type'); // documents|images|videos|audio
+    // Lọc theo category
+        $category = $request->get('category');
         
     // Tìm kiếm
         $search = $request->get('search');
@@ -171,20 +165,10 @@ class FileController extends Controller
             });
         }
 
-        if ($type) {
-            switch ($type) {
-                case 'documents':
-                    $filesQuery->whereIn('extension', ['pdf', 'doc', 'docx', 'txt', 'xls', 'xlsx', 'ppt', 'pptx']);
-                    break;
-                case 'images':
-                    $filesQuery->whereIn('extension', ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']);
-                    break;
-                case 'videos':
-                    $filesQuery->whereIn('extension', ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv']);
-                    break;
-                case 'audio':
-                    $filesQuery->whereIn('extension', ['mp3', 'wav', 'ogg', 'wma']);
-                    break;
+        if ($category) {
+            $categoryModel = Category::where('slug', $category)->where('is_active', true)->first();
+            if ($categoryModel && !empty($categoryModel->extensions)) {
+                $filesQuery->whereIn('extension', $categoryModel->extensions);
             }
         }
 
@@ -207,12 +191,16 @@ class FileController extends Controller
             ->root()
             ->orderBy('name')
             ->get();
+            
+        // Lấy danh sách categories active
+        $categories = Category::where('is_active', true)->orderBy('order')->get();
 
         return view('pages.recent', [
             'files' => $files,
             'recentFolders' => $recentFolders,
             'folders' => $folders,
-            'filter' => compact('type', 'search', 'sort', 'order'),
+            'categories' => $categories,
+            'filter' => compact('category', 'search', 'sort', 'order'),
         ]);
     }
 
@@ -260,7 +248,7 @@ class FileController extends Controller
     {
         $userId = Auth::id() ?? 1;
         $item = $request->get('item', 'all'); // all | files | folders
-        $type = $request->get('type'); // documents|images|videos|audio
+        $category = $request->get('category');
         $search = $request->get('search');
         $sort = $request->get('sort', 'trashed_at'); // name|size|trashed_at
         $order = $request->get('order', 'desc');
@@ -277,20 +265,10 @@ class FileController extends Controller
             });
         }
 
-        if ($type) {
-            switch ($type) {
-                case 'documents':
-                    $filesQuery->whereIn('extension', ['pdf', 'doc', 'docx', 'txt', 'xls', 'xlsx,', 'ppt', 'pptx']);
-                    break;
-                case 'images':
-                    $filesQuery->whereIn('extension', ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']);
-                    break;
-                case 'videos':
-                    $filesQuery->whereIn('extension', ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv']);
-                    break;
-                case 'audio':
-                    $filesQuery->whereIn('extension', ['mp3', 'wav', 'ogg', 'wma']);
-                    break;
+        if ($category) {
+            $categoryModel = Category::where('slug', $category)->where('is_active', true)->first();
+            if ($categoryModel && !empty($categoryModel->extensions)) {
+                $filesQuery->whereIn('extension', $categoryModel->extensions);
             }
         }
 
@@ -311,9 +289,12 @@ class FileController extends Controller
         $foldersQuery->orderBy($folderSort, $order);
         $folders = $foldersQuery->paginate(20)->appends($request->query());
 
-        $filter = compact('item', 'type', 'search', 'sort', 'order');
+        // Lấy danh sách categories active
+        $categories = Category::where('is_active', true)->orderBy('order')->get();
 
-        return view('pages.trash', compact('files', 'folders', 'filter'));
+        $filter = compact('item', 'category', 'search', 'sort', 'order');
+
+        return view('pages.trash', compact('files', 'folders', 'categories', 'filter'));
     }
 
     /**

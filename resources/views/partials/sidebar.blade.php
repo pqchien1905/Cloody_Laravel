@@ -44,6 +44,23 @@
         </div>
         <nav class="iq-sidebar-menu">
             <ul id="iq-sidebar-toggle" class="iq-menu">
+                @if (request()->routeIs('admin.*'))
+                <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.dashboard') }}">
+                        <i class="las la-tachometer-alt"></i><span>Admin Dashboard</span>
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.users.index') }}">
+                        <i class="las la-users-cog"></i><span>Manage Users</span>
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.categories.index') }}">
+                        <i class="las la-tags"></i><span>File Categories</span>
+                    </a>
+                </li>
+                @else
                 <li class="{{ request()->routeIs('cloudbox.dashboard') ? 'active' : '' }}">
                     <a href="{{ route('cloudbox.dashboard') }}" class="{{ request()->routeIs('cloudbox.dashboard') ? 'active' : '' }}">
                         <i class="las la-home iq-arrow-left"></i><span>Dashboard</span>
@@ -80,41 +97,12 @@
                         <i class="las la-trash iq-arrow-left"></i><span>Trash</span>
                     </a>
                 </li>
-                <li class="{{ request()->routeIs('cloudbox.user.*') ? 'active' : '' }}">
-                    <a href="#otherpage" class="{{ request()->routeIs('cloudbox.user.*') ? '' : 'collapsed' }}" data-toggle="collapse" aria-expanded="{{ request()->routeIs('cloudbox.user.*') ? 'true' : 'false' }}">
-                        <i class="las la-pager"></i><span>Other Page</span>
-                        <i class="las la-angle-right iq-arrow-right arrow-active"></i>
-                        <i class="las la-angle-down iq-arrow-right arrow-hover"></i>
+                <li class="{{ request()->routeIs('cloudbox.user.profile') ? 'active' : '' }}">
+                    <a href="{{ route('cloudbox.user.profile') }}">
+                        <i class="las la-id-card-alt"></i><span>Profile</span>
                     </a>
-                    <ul id="otherpage" class="iq-submenu collapse {{ request()->routeIs('cloudbox.user.*') ? 'show' : '' }}" data-parent="#iq-sidebar-toggle">
-                        <li class="{{ request()->routeIs('cloudbox.user.*') ? 'active' : '' }}">
-                            <a href="#user" class="{{ request()->routeIs('cloudbox.user.*') ? '' : 'collapsed' }}" data-toggle="collapse" aria-expanded="{{ request()->routeIs('cloudbox.user.*') ? 'true' : 'false' }}">
-                                <i class="las la-user-cog"></i><span>User Details</span>
-                                <i class="las la-angle-right iq-arrow-right arrow-active"></i>
-                                <i class="las la-angle-down iq-arrow-right arrow-hover"></i>
-                            </a>
-                            <ul id="user" class="iq-submenu collapse {{ request()->routeIs('cloudbox.user.*') ? 'show' : '' }}" data-parent="#otherpage">
-                                <li class="{{ request()->routeIs('cloudbox.user.profile') ? 'active' : '' }}"><a href="{{ route('cloudbox.user.profile') }}"><i class="las la-id-card-alt"></i>Profile</a></li>
-                                <li class="{{ request()->routeIs('cloudbox.user.add') ? 'active' : '' }}"><a href="{{ route('cloudbox.user.add') }}"><i class="las la-plus-circle"></i>Add User</a></li>
-                                <li class="{{ request()->routeIs('cloudbox.user.list') ? 'active' : '' }}"><a href="{{ route('cloudbox.user.list') }}"><i class="las la-th-list"></i>User List</a></li>
-                            </ul>
-                        </li>
-                        <li class="">
-                            <a href="#auth" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                                <i class="las la-lock"></i><span>Authentication</span>
-                                <i class="las la-angle-right iq-arrow-right arrow-active"></i>
-                                <i class="las la-angle-down iq-arrow-right arrow-hover"></i>
-                            </a>
-                            <ul id="auth" class="iq-submenu collapse" data-parent="#otherpage">
-                                <li><a href="{{ route('login') }}"><i class="las la-sign-in-alt"></i>Login</a></li>
-                                <li><a href="{{ route('register') }}"><i class="las la-user-plus"></i>Register</a></li>
-                                <li><a href="#"><i class="las la-redo-alt"></i>Recover Password</a></li>
-                                <li><a href="#"><i class="las la-envelope-open-text"></i>Confirm Mail</a></li>
-                                <li><a href="#"><i class="las la-lock"></i>Lock Screen</a></li>
-                            </ul>
-                        </li>
-                    </ul>
                 </li>
+                @endif
             </ul>
         </nav>
         <div class="sidebar-bottom">

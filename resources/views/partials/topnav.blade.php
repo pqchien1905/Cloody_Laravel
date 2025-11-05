@@ -135,8 +135,14 @@
                             </div>
                         </li>
                         <li class="nav-item nav-icon dropdown caption-content">
-                            <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <div class="caption bg-primary line-height">{{ strtoupper(substr(Auth::user()->name ?? 'P', 0, 1)) }}</div>
+                            <a href="#" class="search-toggle dropdown-toggle d-flex align-items-center justify-content-center" id="dropdownMenuButton03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 0;">
+                                @if(Auth::user()->avatar)
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid #667eea; box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);">
+                                        <img src="{{ asset(Auth::user()->avatar) }}" alt="user" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                    </div>
+                                @else
+                                    <div class="caption bg-primary line-height">{{ strtoupper(substr(Auth::user()->name ?? 'P', 0, 1)) }}</div>
+                                @endif
                             </a>
                             <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton03">
                                 <div class="card mb-0">
@@ -149,10 +155,15 @@
                                     <div class="card-body">
                                         <div class="profile-header">
                                             <div class="cover-container text-center">
-                                                <div class="rounded-circle profile-icon bg-primary mx-auto d-block">
-                                                    {{ strtoupper(substr(Auth::user()->name ?? 'P', 0, 1)) }}                                                    
-                                                    <a href=""></a>
-                                                </div>
+                                                @if(Auth::user()->avatar)
+                                                    <div style="width: 80px; height: 80px; margin: 0 auto;">
+                                                        <img src="{{ asset(Auth::user()->avatar) }}" class="rounded-circle" alt="avatar" style="width: 100%; height: 100%; object-fit: cover; border: 3px solid #667eea; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">
+                                                    </div>
+                                                @else
+                                                    <div class="rounded-circle profile-icon bg-primary mx-auto d-block" style="width: 80px; height: 80px; line-height: 80px; font-size: 32px;">
+                                                        {{ strtoupper(substr(Auth::user()->name ?? 'P', 0, 1)) }}
+                                                    </div>
+                                                @endif
                                                 <div class="profile-detail mt-3">
                                                     <h5><a href="{{ route('cloudbox.user.profile') }}">{{ Auth::user()->name ?? 'User Name' }}</a></h5>
                                                     <p>{{ Auth::user()->email ?? 'user@example.com' }}</p>

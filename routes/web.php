@@ -29,6 +29,10 @@ use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\FileShareController;
 use App\Http\Controllers\FolderShareController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminUsersController;
+use App\Http\Controllers\AdminCategoriesController;
+use App\Http\Controllers\UserProfileController;
 
 // Các route CloudBOX - Yêu cầu đăng nhập
 Route::middleware(['auth'])->prefix('cloudbox')->group(function () {
@@ -80,9 +84,21 @@ Route::middleware(['auth'])->prefix('cloudbox')->group(function () {
     Route::delete('/shares/{id}', [FileShareController::class, 'destroy'])->name('cloudbox.shares.revoke');
     
     // Trang người dùng
-    Route::get('/user/profile', function () { return view('pages.user.profile'); })->name('cloudbox.user.profile');
+    Route::get('/user/profile', [UserProfileController::class, 'index'])->name('cloudbox.user.profile');
     Route::get('/users', function () { return view('pages.user.list'); })->name('cloudbox.user.list');
     Route::get('/users/add', function () { return view('pages.user.add'); })->name('cloudbox.user.add');
+});
+
+// Khu vực quản trị (Admin) - sử dụng cùng giao diện, yêu cầu đăng nhập + quyền admin
+Route::middleware(['auth', 'admin'])->prefix('admin')->as('admin.')->group(function () {
+    // /admin → Admin Dashboard
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+
+    // Quản lý người dùng trong admin
+    Route::resource('users', AdminUsersController::class)->except(['show']);
+    
+    // Quản lý danh mục file trong admin
+    Route::resource('categories', AdminCategoriesController::class)->except(['show', 'create', 'edit']);
 });
 
 // Liên kết chia sẻ công khai (không yêu cầu đăng nhập)
