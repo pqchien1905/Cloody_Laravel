@@ -6,8 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Model File - Quản lý thông tin file trong hệ thống
+ */
 class File extends Model
 {
+    /**
+     * Các thuộc tính có thể gán hàng loạt
+     */
     protected $fillable = [
         'user_id',
         'folder_id',
@@ -23,6 +29,9 @@ class File extends Model
         'description',
     ];
 
+    /**
+     * Các thuộc tính cần ép kiểu
+     */
     protected $casts = [
         'is_favorite' => 'boolean',
         'is_trash' => 'boolean',
@@ -31,7 +40,7 @@ class File extends Model
     ];
 
     /**
-     * Get the user that owns the file.
+     * Lấy người dùng sở hữu file này.
      */
     public function user(): BelongsTo
     {
@@ -39,7 +48,7 @@ class File extends Model
     }
 
     /**
-     * Get the folder that contains the file.
+     * Lấy thư mục chứa file này.
      */
     public function folder(): BelongsTo
     {
@@ -47,7 +56,7 @@ class File extends Model
     }
 
     /**
-     * Get all shares for this file.
+     * Lấy tất cả các lượt chia sẻ của file này.
      */
     public function shares(): HasMany
     {
@@ -55,7 +64,17 @@ class File extends Model
     }
 
     /**
-     * Get human readable file size.
+     * Lấy tất cả các nhóm mà file này được chia sẻ với.
+     */
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_files')
+            ->withPivot('shared_by', 'permission')
+            ->withTimestamps();
+    }
+
+    /**
+     * Lấy kích thước file dạng dễ đọc (B, KB, MB, GB, TB).
      */
     public function getFormattedSizeAttribute(): string
     {
@@ -70,7 +89,7 @@ class File extends Model
     }
 
     /**
-     * Scope to get only non-trashed files.
+     * Scope để lấy chỉ các file chưa bị xóa (không ở thùng rác).
      */
     public function scopeActive($query)
     {
@@ -78,7 +97,7 @@ class File extends Model
     }
 
     /**
-     * Scope to get only trashed files.
+     * Scope để lấy chỉ các file đã bị xóa (đang ở thùng rác).
      */
     public function scopeTrashed($query)
     {
@@ -86,7 +105,7 @@ class File extends Model
     }
 
     /**
-     * Scope to get favorite files.
+     * Scope để lấy các file yêu thích.
      */
     public function scopeFavorites($query)
     {

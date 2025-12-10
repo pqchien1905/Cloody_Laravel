@@ -57,7 +57,7 @@ class AdminCategoriesController extends Controller
 
         Category::create($data);
 
-        return redirect()->route('admin.categories.index')->with('status', 'Category created successfully');
+        return redirect()->route('admin.categories.index')->with('status', __('common.category_created_successfully'));
     }
 
     public function update(Request $request, Category $category)
@@ -88,12 +88,12 @@ class AdminCategoriesController extends Controller
 
         $category->update($data);
 
-        return redirect()->route('admin.categories.index')->with('status', 'Category updated successfully');
+        return redirect()->route('admin.categories.index')->with('status', __('common.category_updated_successfully'));
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('status', 'Category deleted successfully');
+        return redirect()->route('admin.categories.index')->with('status', __('common.category_deleted_successfully'));
     }
 }

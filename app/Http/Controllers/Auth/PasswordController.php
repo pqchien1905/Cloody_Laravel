@@ -24,6 +24,6 @@ class PasswordController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        return redirect()->route('cloudbox.user.profile')->with('status', 'password-updated');
+        return redirect()->route('cloody.user.profile')->with('status', 'password-updated');
     }
 }

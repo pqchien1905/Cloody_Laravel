@@ -7090,8 +7090,7 @@ a.text-pink:hover, a.text-pink:focus {
         -ms-flex-align: center;
         align-items: center;
         overflow: hidden;
-        border-radius: 0px;
-        text-transform: capitalize; }
+        border-radius: 0px; }
         .iq-sidebar-menu .iq-menu li a i {
           font-size: 20px;
           margin-right: 10px;

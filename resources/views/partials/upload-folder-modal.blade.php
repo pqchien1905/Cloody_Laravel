@@ -4,13 +4,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="ri-folder-upload-line"></i> Upload Folder
+                    <i class="ri-folder-upload-line"></i> {{ __('common.upload_folder') }}
                 </h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
             </div>
-            <form id="uploadFolderForm" action="{{ route('cloudbox.folders.upload') }}" method="POST" enctype="multipart/form-data">
+            <form id="uploadFolderForm" action="{{ route('cloody.folders.upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" id="folder_paths" name="folder_paths" value="">
                 <input type="hidden" id="folder_conflict_action" name="conflict_action" value="">
@@ -18,29 +18,29 @@
                 <div class="modal-body">
                     <!-- Folder Selection -->
                     <div class="form-group">
-                        <label for="folder_input">Select Folder from Your Computer <span class="text-danger">*</span></label>
+                        <label for="folder_input">{{ __('common.select_folder_from_computer') }} <span class="text-danger">*</span></label>
                         <div class="custom-file">
                             <input type="file" id="folder_input" name="files[]" webkitdirectory directory multiple 
                                    class="custom-file-input" required>
                             <label class="custom-file-label" for="folder_input" id="folder_input_label">
-                                Choose a folder...
+                                {{ __('common.choose_a_folder') }}
                             </label>
                         </div>
                         <small class="form-text text-muted">
-                            Maximum file size: 100MB per file. All files and subfolders will be uploaded.
+                            {{ __('common.maximum_file_size_per_file', ['size' => 100]) }}
                         </small>
                     </div>
 
                     <!-- Upload Preview -->
                     <div id="uploadFolderPreview" class="upload-preview-success d-none mt-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <strong><i class="ri-folder-line"></i> Selected Folder:</strong>
+                            <strong><i class="ri-folder-line"></i> {{ __('common.selected_folder') }}</strong>
                             <span id="folderName" class="badge badge-primary"></span>
                         </div>
                         <div class="mb-2">
                             <small class="text-muted">
-                                <i class="ri-file-list-line"></i> <span id="folderFileCount">0</span> file(s) in 
-                                <i class="ri-folder-2-line"></i> <span id="folderCount">0</span> folder(s)
+                                <i class="ri-file-list-line"></i> <span id="folderFileCount">0</span> {{ __('common.files_in_folders') }} 
+                                <i class="ri-folder-2-line"></i> <span id="folderCount">0</span> {{ __('common.folder_s') }}
                             </small>
                         </div>
                         <div id="folderFileList" class="border rounded p-2" style="max-height: 200px; overflow-y: auto; background: #f8f9fa;">
@@ -51,7 +51,7 @@
                     <!-- Upload Progress Bar -->
                     <div id="folderUploadProgress" class="d-none mt-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <small class="text-muted">Uploading...</small>
+                            <small class="text-muted">{{ __('common.uploading') }}</small>
                             <small class="text-muted"><span id="folderProgressPercent">0</span>%</small>
                         </div>
                         <div class="progress" style="height: 20px;">
@@ -62,36 +62,36 @@
 
                     <!-- Privacy Settings -->
                     <div class="form-group mt-3">
-                        <label>Folder Privacy <span class="text-danger">*</span></label>
+                        <label>{{ __('common.folder_privacy') }} <span class="text-danger">*</span></label>
                         <div class="custom-control custom-radio mb-2">
                             <input type="radio" id="upload_folder_privacy_private" name="is_public" value="0" 
                                    class="custom-control-input" checked>
                             <label class="custom-control-label" for="upload_folder_privacy_private">
-                                <i class="ri-lock-line"></i> Private
-                                <small class="d-block text-muted">Only you can access this folder</small>
+                                <i class="ri-lock-line"></i> {{ __('common.private') }}
+                                <small class="d-block text-muted">{{ __('common.only_you_can_access_this_folder') }}</small>
                             </label>
                         </div>
                         <div class="custom-control custom-radio">
                             <input type="radio" id="upload_folder_privacy_public" name="is_public" value="1" 
                                    class="custom-control-input">
                             <label class="custom-control-label" for="upload_folder_privacy_public">
-                                <i class="ri-global-line"></i> Public
-                                <small class="d-block text-muted">Anyone with the link can view</small>
+                                <i class="ri-global-line"></i> {{ __('common.public') }}
+                                <small class="d-block text-muted">{{ __('common.anyone_with_link_can_view') }}</small>
                             </label>
                         </div>
                     </div>
 
                     <!-- Description -->
                     <div class="form-group">
-                        <label for="upload_folder_description">Description</label>
-                        <textarea id="upload_folder_description" name="description" class="form-control" rows="3" placeholder="Optional description for this folder..."></textarea>
-                        <small class="form-text text-muted">This description will be applied to the new root folder you upload.</small>
+                        <label for="upload_folder_description">{{ __('common.description') }}</label>
+                        <textarea id="upload_folder_description" name="description" class="form-control" rows="3" placeholder="{{ __('common.optional_description_for_folder') }}"></textarea>
+                        <small class="form-text text-muted">{{ __('common.description_will_be_applied_to_root_folder') }}</small>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel') }}</button>
                     <button type="submit" class="btn btn-primary" id="uploadFolderBtn" disabled>
-                        <i class="ri-upload-2-line"></i> Upload Folder
+                        <i class="ri-upload-2-line"></i> {{ __('common.upload_folder') }}
                     </button>
                 </div>
             </form>
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (files.length > 15) {
                 const more = document.createElement('div');
                 more.className = 'small text-muted mt-2';
-                more.innerHTML = `<i class="ri-more-line"></i> ... and ${files.length - 15} more file(s)`;
+                more.innerHTML = `<i class="ri-more-line"></i> {{ __('common.and_more_files', ['count' => '']) }}`.replace(':count', files.length - 15);
                 fileList.appendChild(more);
             }
 
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const rootFolderName = firstPath.split('/')[0];
                 
                 // Check if folder already exists
-                fetch('{{ route("cloudbox.folders.check-duplicates") }}', {
+                fetch('{{ route("cloody.folders.check-duplicates") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function proceedWithUpload() {
         // Use selectedFiles variable that was saved when folder was selected
         if (!selectedFiles || selectedFiles.length === 0) {
-            alert('No files selected. Please select a folder again.');
+            alert('{{ __('common.no_files_selected') }}');
             isHandlingConflict = false; // Reset flag
             $('#folderConflictModal').modal('hide');
             $('#uploadFolderModal').modal('show');
@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show progress bar
         uploadProgress.classList.remove('d-none');
         uploadBtn.disabled = true;
-        uploadBtn.innerHTML = '<i class="ri-loader-4-line"></i> Uploading...';
+        uploadBtn.innerHTML = '<i class="ri-loader-4-line"></i> {{ __('common.uploading') }}';
         
         // Create FormData manually to ensure we have the files
         const formData = new FormData();
@@ -359,23 +359,23 @@ document.addEventListener('DOMContentLoaded', function() {
                             window.location.reload();
                         }, 500);
                     } else {
-                        alert(response.message || 'Upload failed. Please try again.');
+                        alert(response.message || '{{ __('common.upload_failed') }}');
                         resetUploadState();
                     }
                 } catch (e) {
-                    alert('Upload failed. Please try again.');
+                    alert('{{ __('common.upload_failed') }}');
                     resetUploadState();
                 }
             } else {
                 // Error
-                alert('Upload failed. Please try again.');
+                alert('{{ __('common.upload_failed') }}');
                 resetUploadState();
             }
         });
         
         // Handle error
         xhr.addEventListener('error', function() {
-            alert('Upload error. Please try again.');
+            alert('{{ __('common.upload_error') }}');
             resetUploadState();
         });
         
@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
     progressBar.classList.add('progress-bar-animated');
     progressBar.classList.remove('bg-success');
         uploadBtn.disabled = false;
-        uploadBtn.innerHTML = '<i class="ri-upload-2-line"></i> Upload Folder';
+        uploadBtn.innerHTML = '<i class="ri-upload-2-line"></i> {{ __('common.upload_folder') }}';
     }
 
     // Reset on modal close
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedFiles = [];
         uploadPreview.classList.add('d-none');
         resetUploadState();
-        folderInputLabel.textContent = 'Choose a folder...';
+        folderInputLabel.textContent = '{{ __('common.choose_a_folder') }}';
         fileList.innerHTML = '';
         folderPathsInput.value = '';
     });
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="ri-error-warning-line text-warning"></i> Replace or keep existing folder?
+                    <i class="ri-error-warning-line text-warning"></i> {{ __('common.replace_or_keep') }}
                 </h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
@@ -431,29 +431,29 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="modal-body">
                 <p class="text-muted mb-3">
-                    The folder <strong id="conflictFolderName"></strong> already exists in this location.
+                    {{ __('common.folder_exists', ['name' => '<span id="conflictFolderName"></span>']) }}
                 </p>
                 
                 <div class="custom-control custom-radio mb-3 p-3 border rounded" style="cursor: pointer;" id="replaceOption">
                     <input type="radio" id="replaceRadio" name="conflictChoice" value="replace" class="custom-control-input" checked>
                     <label class="custom-control-label w-100" for="replaceRadio" style="cursor: pointer;">
-                        <strong class="d-block">Replace existing folder</strong>
-                        <small class="text-muted">The current version will be overwritten</small>
+                        <strong class="d-block">{{ __('common.replace_existing_folder') }}</strong>
+                        <small class="text-muted">{{ __('common.current_version_will_be_overwritten') }}</small>
                     </label>
                 </div>
                 
                 <div class="custom-control custom-radio p-3 border rounded" style="cursor: pointer;" id="mergeOption">
                     <input type="radio" id="mergeRadio" name="conflictChoice" value="merge" class="custom-control-input">
                     <label class="custom-control-label w-100" for="mergeRadio" style="cursor: pointer;">
-                        <strong class="d-block">Keep both folders</strong>
-                        <small class="text-muted">A new folder will be created (e.g., “Folder Name (1)”) and your files will be uploaded into it.</small>
+                        <strong class="d-block">{{ __('common.keep_both_folders') }}</strong>
+                        <small class="text-muted">{{ __('common.new_folder_will_be_created') }}</small>
                     </label>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel upload</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel_upload') }}</button>
                 <button type="button" class="btn btn-primary" id="continueUploadBtn">
-                    <i class="ri-upload-2-line"></i> Continue Upload
+                    <i class="ri-upload-2-line"></i> {{ __('common.continue_upload') }}
                 </button>
             </div>
         </div>

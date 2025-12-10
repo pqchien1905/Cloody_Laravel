@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use App\Models\Folder;
+use App\Helpers\FileValidator;
+use App\Helpers\StorageManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -24,11 +26,24 @@ class FileUploadController extends Controller
                 $q->where('user_id', $userId)
                   ->orWhereHas('shares', function($sq) use ($userId) {
                       $sq->where('shared_with', $userId);
+                  })
+                  ->orWhereHas('groups', function($gq) use ($userId) {
+                      // Check if user is member of any group that this file is shared with
+                      $gq->whereHas('members', function($mq) use ($userId) {
+                          $mq->where('user_id', $userId);
+                      });
                   });
             })
             ->firstOrFail();
 
-        $fileUrl = asset('storage/' . ltrim($file->path, '/'));
+        // Verify file exists
+        $filePath = storage_path('app/public/' . $file->path);
+        if (!file_exists($filePath) && !Storage::disk('public')->exists($file->path)) {
+            return redirect()->back()->with('error', __('common.file_not_found'));
+        }
+
+        // Generate file URL using the serve route for better access control and headers
+        $fileUrl = route('cloody.files.serve', $file->id);
 
         return view('pages.viewer', [
             'file' => $file,
@@ -47,9 +62,19 @@ class FileUploadController extends Controller
             'conflict_action' => $request->conflict_action,
         ]);
         
+        $maxFileSize = FileValidator::getMaxFileSize();
+        $maxFiles = FileValidator::getMaxFilesPerRequest();
+        
         $request->validate([
-            'files' => 'required|array',
-            'files.*' => 'file|max:102400', // 100MB cho mỗi file
+            'files' => [
+                'required',
+                'array',
+                'max:' . $maxFiles,
+            ],
+            'files.*' => [
+                'file',
+                'max:' . $maxFileSize, // Configurable max file size
+            ],
             'folder_id' => 'nullable|exists:folders,id',
             'conflict_action' => 'nullable|in:replace,keep_both',
         ]);
@@ -63,8 +88,44 @@ class FileUploadController extends Controller
         $skipped = [];
         $replaced = [];
 
+        // Check total size of all files
+        $totalSize = 0;
+        foreach ($request->file('files') as $uploadedFile) {
+            if ($uploadedFile) {
+                $totalSize += $uploadedFile->getSize();
+            }
+        }
+        
+        $maxTotalSize = FileValidator::getMaxTotalSize() * 1024; // Convert KB to bytes
+        if ($totalSize > $maxTotalSize) {
+            $totalSizeMB = round($totalSize / 1024 / 1024, 2);
+            $maxTotalSizeMB = round($maxTotalSize / 1024 / 1024, 2);
+            return redirect()->back()->with('error', __('common.total_size_exceeds_maximum', ['size' => $totalSizeMB, 'max' => $maxTotalSizeMB]));
+        }
+
         foreach ($request->file('files') as $uploadedFile) {
             if (!$uploadedFile) {
+                continue;
+            }
+
+            // Validate file type (extension and MIME type)
+            $validation = FileValidator::validateFile($uploadedFile);
+            if (!$validation['valid']) {
+                $skipped[] = $uploadedFile->getClientOriginalName() . ' - ' . implode(', ', $validation['errors']);
+                continue;
+            }
+
+            // Check storage limits
+            $fileSize = $uploadedFile->getSize();
+            $userStorageCheck = StorageManager::canUserUpload($userId, $fileSize);
+            if (!$userStorageCheck['allowed']) {
+                $skipped[] = $uploadedFile->getClientOriginalName() . ' - ' . $userStorageCheck['message'];
+                continue;
+            }
+
+            $systemStorageCheck = StorageManager::canSystemAccept($fileSize);
+            if (!$systemStorageCheck['allowed']) {
+                $skipped[] = $uploadedFile->getClientOriginalName() . ' - ' . $systemStorageCheck['message'];
                 continue;
             }
 
@@ -156,19 +217,19 @@ class FileUploadController extends Controller
     // Tạo thông báo thành công
         $messages = [];
         if ($uploadedCount > 0) {
-            $messages[] = "Uploaded {$uploadedCount} file(s) successfully!";
+            $messages[] = __('common.files_uploaded_successfully', ['count' => $uploadedCount]);
         }
         if (count($replaced) > 0) {
-            $messages[] = "Replaced: " . implode(', ', $replaced);
+            $messages[] = __('common.files_replaced', ['files' => implode(', ', $replaced)]);
         }
         if (count($skipped) > 0) {
-            $messages[] = "Skipped duplicates: " . implode(', ', $skipped);
+            $messages[] = __('common.files_skipped_duplicates', ['files' => implode(', ', $skipped)]);
         }
         
         if ($uploadedCount > 0) {
             return redirect()->back()->with('success', implode(' ', $messages));
         } else {
-            return redirect()->back()->with('error', 'No files uploaded. Duplicates detected: ' . implode(', ', $skipped));
+            return redirect()->back()->with('error', __('common.no_files_uploaded_duplicates', ['files' => implode(', ', $skipped)]));
         }
     }
 
@@ -236,6 +297,41 @@ class FileUploadController extends Controller
     }
 
     /**
+     * Serve file for preview (inline viewing).
+     */
+    public function serve($id)
+    {
+        $userId = Auth::id() ?? 1;
+        $file = File::where('id', $id)
+            ->where('is_trash', false)
+            ->where(function($q) use ($userId) {
+                $q->where('user_id', $userId)
+                  ->orWhereHas('shares', function($sq) use ($userId) {
+                      $sq->where('shared_with', $userId);
+                  })
+                  ->orWhereHas('groups', function($gq) use ($userId) {
+                      $gq->whereHas('members', function($mq) use ($userId) {
+                          $mq->where('user_id', $userId);
+                      });
+                  });
+            })
+            ->firstOrFail();
+
+        $filePath = storage_path('app/public/' . $file->path);
+
+        if (!file_exists($filePath)) {
+            abort(404, __('common.file_not_found'));
+        }
+
+        // Serve file with proper headers for inline viewing
+        return response()->file($filePath, [
+            'Content-Type' => $file->mime_type ?? 'application/octet-stream',
+            'Content-Disposition' => 'inline; filename="' . $file->original_name . '"',
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
+    }
+
+    /**
      * Download file.
      */
     public function download($id)
@@ -247,6 +343,12 @@ class FileUploadController extends Controller
                 $q->where('user_id', $userId)
                   ->orWhereHas('shares', function($sq) use ($userId) {
                       $sq->where('shared_with', $userId);
+                  })
+                  ->orWhereHas('groups', function($gq) use ($userId) {
+                      // Check if user is member of any group that this file is shared with
+                      $gq->whereHas('members', function($mq) use ($userId) {
+                          $mq->where('user_id', $userId);
+                      });
                   });
             })
             ->firstOrFail();
@@ -254,7 +356,7 @@ class FileUploadController extends Controller
         $filePath = storage_path('app/public/' . $file->path);
 
         if (!file_exists($filePath)) {
-            return redirect()->back()->with('error', 'File not found!');
+            return redirect()->back()->with('error', __('common.file_not_found'));
         }
 
         return response()->download($filePath, $file->original_name);
@@ -273,7 +375,7 @@ class FileUploadController extends Controller
             'trashed_at' => now(),
         ]);
 
-        return redirect()->back()->with('success', 'Files moved to trash!');
+        return redirect()->back()->with('success', __('common.files_moved_to_trash'));
     }
 
     /**
@@ -298,7 +400,7 @@ class FileUploadController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', "Moved {$count} file(s) to trash!");
+        return redirect()->back()->with('success', __('common.moved_files_to_trash', ['count' => $count]));
     }
 
     /**
@@ -314,7 +416,7 @@ class FileUploadController extends Controller
     // Xóa bản ghi trong cơ sở dữ liệu
         $file->delete();
 
-        return redirect()->back()->with('success', 'File deleted permanently!');
+        return redirect()->back()->with('success', __('common.file_permanently_deleted'));
     }
 
     /**
@@ -329,7 +431,7 @@ class FileUploadController extends Controller
             'trashed_at' => null,
         ]);
 
-        return redirect()->back()->with('success', 'File restored!');
+        return redirect()->back()->with('success', __('common.file_restored'));
     }
     
     /**
@@ -354,7 +456,7 @@ class FileUploadController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', "Restored {$count} file(s)!");
+        return redirect()->back()->with('success', __('common.restored_files', ['count' => $count]));
     }
 
     /**
@@ -368,7 +470,7 @@ class FileUploadController extends Controller
             'is_favorite' => !$file->is_favorite,
         ]);
 
-        return redirect()->back()->with('success', 'Favorite updated!');
+        return redirect()->back()->with('success', __('common.favorite_updated'));
     }
 
     /**
@@ -394,6 +496,6 @@ class FileUploadController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', "Permanently deleted {$count} file(s)!");
+        return redirect()->back()->with('success', __('common.permanently_deleted_files', ['count' => $count]));
     }
 }

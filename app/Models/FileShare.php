@@ -6,8 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
+/**
+ * Model FileShare - Quản lý việc chia sẻ file giữa các người dùng
+ */
 class FileShare extends Model
 {
+    /**
+     * Các thuộc tính có thể gán hàng loạt
+     */
     protected $fillable = [
         'file_id',
         'shared_by',
@@ -18,13 +24,16 @@ class FileShare extends Model
         'expires_at',
     ];
 
+    /**
+     * Các thuộc tính cần ép kiểu
+     */
     protected $casts = [
         'is_public' => 'boolean',
         'expires_at' => 'datetime',
     ];
 
     /**
-     * Boot method to generate share token.
+     * Phương thức boot để tự động tạo share token khi tạo mới.
      */
     protected static function boot()
     {
@@ -32,13 +41,14 @@ class FileShare extends Model
 
         static::creating(function ($model) {
             if (empty($model->share_token)) {
+                // Tự động tạo token ngẫu nhiên 32 ký tự nếu chưa có
                 $model->share_token = Str::random(32);
             }
         });
     }
 
     /**
-     * Get the file being shared.
+     * Lấy file được chia sẻ.
      */
     public function file(): BelongsTo
     {
@@ -46,7 +56,7 @@ class FileShare extends Model
     }
 
     /**
-     * Get the user who shared the file.
+     * Lấy người dùng đã chia sẻ file.
      */
     public function sharedBy(): BelongsTo
     {
@@ -54,7 +64,7 @@ class FileShare extends Model
     }
 
     /**
-     * Get the user the file was shared with.
+     * Lấy người dùng được chia sẻ file.
      */
     public function sharedWith(): BelongsTo
     {
@@ -62,7 +72,7 @@ class FileShare extends Model
     }
 
     /**
-     * Check if share has expired.
+     * Kiểm tra xem lượt chia sẻ đã hết hạn chưa.
      */
     public function isExpired(): bool
     {
@@ -74,7 +84,7 @@ class FileShare extends Model
     }
 
     /**
-     * Scope to get active shares (not expired).
+     * Scope để lấy các lượt chia sẻ còn hiệu lực (chưa hết hạn).
      */
     public function scopeActive($query)
     {

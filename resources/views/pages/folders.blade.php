@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Folders - CloudBOX')
+@section('title', 'Folders - Cloody')
 
 @section('content')
 <div class="container-fluid">
@@ -78,14 +78,14 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
-                        <h4 class="card-title">All Folders</h4>
+                        <h4 class="card-title">{{ __('common.all_folders_title') }}</h4>
                     </div>
                     <div class="card-header-toolbar d-flex align-items-center">
                         <button type="button" class="btn btn-outline-primary mr-2" data-toggle="modal" data-target="#uploadFolderModal">
-                            <i class="ri-folder-upload-line"></i> Upload Folder
+                            <i class="ri-folder-upload-line"></i> {{ __('common.upload_folder') }}
                         </button>
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createFolderModal">
-                            <i class="ri-folder-add-line"></i> New Folder
+                            <i class="ri-folder-add-line"></i> {{ __('common.new_folder') }}
                         </button>
                     </div>
                 </div>
@@ -93,9 +93,9 @@
                     <!-- Filters -->
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <form method="GET" action="{{ route('cloudbox.folders.index') }}">
+                            <form method="GET" action="{{ route('cloody.folders.index') }}">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="search" placeholder="Search folders..." value="{{ request('search') }}">
+                                    <input type="text" class="form-control" name="search" placeholder="{{ __('common.search') }} {{ __('common.folders') }}..." value="{{ request('search') }}">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="ri-search-line"></i>
@@ -106,16 +106,16 @@
                         </div>
                         <div class="col-md-3">
                             <select class="form-control" onchange="window.location.href='?filter='+this.value">
-                                <option value="">All Folders</option>
-                                <option value="favorites" {{ request('filter') == 'favorites' ? 'selected' : '' }}>Favorites</option>
-                                <option value="shared" {{ request('filter') == 'shared' ? 'selected' : '' }}>Shared</option>
+                                <option value="">{{ __('common.all_folders') }}</option>
+                                <option value="favorites" {{ request('filter') == 'favorites' ? 'selected' : '' }}>{{ __('common.favorites') }}</option>
+                                <option value="shared" {{ request('filter') == 'shared' ? 'selected' : '' }}>{{ __('common.shared') }}</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <select class="form-control" onchange="window.location.href='?sort='+this.value">
-                                <option value="created_at" {{ request('sort') == 'created_at' ? 'selected' : '' }}>Newest</option>
-                                <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Name</option>
-                                <option value="files_count" {{ request('sort') == 'files_count' ? 'selected' : '' }}>Files Count</option>
+                                <option value="created_at" {{ request('sort') == 'created_at' ? 'selected' : '' }}>{{ __('common.newest') }}</option>
+                                <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>{{ __('common.name') }}</option>
+                                <option value="files_count" {{ request('sort') == 'files_count' ? 'selected' : '' }}>{{ __('common.files_count') }}</option>
                             </select>
                         </div>
                     </div>
@@ -130,13 +130,13 @@
                         <!-- Bulk Actions Bar -->
                         <div id="bulkActionsBar" class="alert alert-primary d-none mb-3">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span><strong id="selectedCount">0</strong> folder</span>
+                                <span><strong id="selectedCount">0</strong> {{ __('common.folder') }}</span>
                                 <div>
                                     <button type="button" class="btn btn-sm btn-danger" id="bulkDeleteBtn">
-                                        <i class="ri-delete-bin-line"></i> Delete Selected
+                                        <i class="ri-delete-bin-line"></i> {{ __('common.delete_selected') }}
                                     </button>
                                     <button type="button" class="btn btn-sm btn-secondary ml-2" id="clearSelectionBtn">
-                                        Clear Selection
+                                        {{ __('common.clear_selection') }}
                                     </button>
                                 </div>
                             </div>
@@ -162,7 +162,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($folders as $folder)
-                                        <tr class="folder-row" data-url="{{ route('cloudbox.folders.show', $folder->id) }}">
+                                        <tr class="folder-row" data-url="{{ route('cloody.folders.show', $folder->id) }}">
                                             <td onclick="event.stopPropagation();">
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" class="custom-control-input folder-checkbox" 
@@ -192,7 +192,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                {{ $folder->files_count }} files
+                                                {{ $folder->files_count }} {{ __('common.files') }}
                                             </td>
                                             <td>
                                                 @if($folder->is_public)
@@ -213,27 +213,27 @@
                                                     </span>
                                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownFolder{{ $folder->id }}">
                                                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editFolderModal{{ $folder->id }}" onclick="event.preventDefault();">
-                                                            <i class="ri-pencil-fill mr-2"></i>Edit
+                                                            <i class="ri-pencil-fill mr-2"></i>{{ __('common.edit') }}
                                                         </a>
-                                                        <form action="{{ route('cloudbox.folders.favorite', $folder->id) }}" method="POST" style="display: inline; width: 100%;">
+                                                        <form action="{{ route('cloody.folders.favorite', $folder->id) }}" method="POST" style="display: inline; width: 100%;">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item">
                                                                 <i class="ri-star-{{ $folder->is_favorite ? 'fill' : 'line' }} mr-2 text-warning"></i>
-                                                                {{ $folder->is_favorite ? 'Remove from Favorites' : 'Add to Favorites' }}
+                                                                {{ $folder->is_favorite ? __('common.remove_from_favorites') : __('common.add_to_favorites') }}
                                                             </button>
                                                         </form>
                                                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#shareFolderModal{{ $folder->id }}" onclick="event.preventDefault();">
-                                                            <i class="ri-share-line mr-2"></i>Share
+                                                            <i class="ri-share-line mr-2"></i>{{ __('common.share') }}
                                                         </a>
                                                         <a class="dropdown-item" href="#" onclick="event.preventDefault();">
-                                                            <i class="ri-file-download-fill mr-2"></i>Download
+                                                            <i class="ri-file-download-fill mr-2"></i>{{ __('common.download') }}
                                                         </a>
                                                         <div class="dropdown-divider"></div>
-                                                        <form id="delete-folder-{{ $folder->id }}" action="{{ route('cloudbox.folders.destroy', $folder->id) }}" method="POST" style="display: inline; width: 100%;" class="js-delete-form">
+                                                        <form id="delete-folder-{{ $folder->id }}" action="{{ route('cloody.folders.destroy', $folder->id) }}" method="POST" style="display: inline; width: 100%;" class="js-delete-form">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="dropdown-item text-danger js-delete-btn">
-                                                                <i class="ri-delete-bin-6-fill mr-2"></i>Delete
+                                                                <i class="ri-delete-bin-6-fill mr-2"></i>{{ __('common.delete') }}
                                                             </button>
                                                         </form>
                                                     </div>
@@ -246,17 +246,17 @@
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Folder</h5>
+                                                        <h5 class="modal-title">{{ __('common.edit') }} {{ __('common.folder') }}</h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
-                                                    <form action="{{ route('cloudbox.folders.update', $folder->id) }}" method="POST">
+                                                    <form action="{{ route('cloody.folders.update', $folder->id) }}" method="POST">
                                                         @csrf
                                                         @method('PUT')
                                                         <div class="modal-body">
                                                             <div class="form-group">
-                                                                <label for="name">Folder Name <span class="text-danger">*</span></label>
+                                                                <label for="name">{{ __('common.folder') }} {{ __('common.name') }} <span class="text-danger">*</span></label>
                                                                 <input type="text" class="form-control" id="name" name="name" value="{{ $folder->name }}" required>
                                                             </div>
                                                             <div class="form-group">
@@ -274,7 +274,7 @@
                                                                            class="custom-control-input" {{ !$folder->is_public ? 'checked' : '' }}>
                                                                     <label class="custom-control-label" for="edit_privacy_private{{ $folder->id }}">
                                                                         <i class="ri-lock-line"></i> Private
-                                                                        <small class="d-block text-muted">Only you can access this folder</small>
+                                                                        <small class="d-block text-muted">{{ __('common.only_you_can_access') }}</small>
                                                                     </label>
                                                                 </div>
                                                                 <div class="custom-control custom-radio">
@@ -282,13 +282,13 @@
                                                                            class="custom-control-input" {{ $folder->is_public ? 'checked' : '' }}>
                                                                     <label class="custom-control-label" for="edit_privacy_public{{ $folder->id }}">
                                                                         <i class="ri-global-line"></i> Public
-                                                                        <small class="d-block text-muted">Anyone with the link can view this folder</small>
+                                                                        <small class="d-block text-muted">{{ __('common.anyone_with_link_can_view') }}</small>
                                                                     </label>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel') }}</button>
                                                             <button type="submit" class="btn btn-primary">Update Folder</button>
                                                         </div>
                                                     </form>
@@ -305,22 +305,22 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title">Share Folder</h5>
+                                        <h5 class="modal-title">{{ __('common.share_folder') }}</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <form action="{{ route('cloudbox.folders.share', $folder->id) }}" method="POST">
+                                    <form action="{{ route('cloody.folders.share', $folder->id) }}" method="POST">
                                         @csrf
                                         <div class="modal-body">
                                             <div class="form-group">
-                                                <label for="share_email_folder_{{ $folder->id }}">Recipient Email <span class="text-danger">*</span></label>
-                                                <input type="email" class="form-control" id="share_email_folder_{{ $folder->id }}" name="email" required placeholder="Enter recipient's email">
+                                                <label for="share_email_folder_{{ $folder->id }}">{{ __('common.recipient_email') }} <span class="text-danger">*</span></label>
+                                                <input type="email" class="form-control" id="share_email_folder_{{ $folder->id }}" name="email" required placeholder="{{ __('common.enter_recipient_email') }}">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-primary">Share</button>
+                                            <button type="submit" class="btn btn-primary">{{ __('common.share') }}</button>
                                         </div>
                                     </form>
                                 </div>
@@ -330,10 +330,10 @@
                     @else
                         <div class="text-center py-5">
                             <i class="ri-folder-open-line font-size-80 text-muted"></i>
-                            <h5 class="mt-3 text-muted">No folders found</h5>
-                            <p class="text-muted">Create your first folder to organize your files</p>
+                            <h5 class="mt-3 text-muted">{{ __('common.no_folders') }}</h5>
+                            <p class="text-muted">{{ __('common.no_folders_desc') }}</p>
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createFolderModal">
-                                <i class="ri-folder-add-line"></i> Create Folder
+                                <i class="ri-folder-add-line"></i> {{ __('common.new_folder') }}
                             </button>
                         </div>
                     @endif
@@ -550,12 +550,13 @@
             if (checked.length === 0) return;
 
             const count = checked.length;
-            if (!confirm(`Move ${count} folder(s) to trash?`)) return;
+            const confirmMessage = '{{ __('common.move_folders_to_trash', ['count' => ':count']) }}'.replace(':count', count);
+            if (!confirm(confirmMessage)) return;
 
             // Tạo và gửi form
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ route("cloudbox.folders.bulk-delete") }}';
+            form.action = '{{ route("cloody.folders.bulk-delete") }}';
             
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';

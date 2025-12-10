@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\File;
 use App\Models\FileShare;
 use App\Models\User;
+use App\Jobs\SendFileShareNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
+/**
+ * Controller - Xử lý việc chia sẻ file với người dùng khác
+ */
 class FileShareController extends Controller
 {
     /**
-     * Share file with user.
+     * Chia sẻ file với người dùng qua email.
      */
     public function store(Request $request, $fileId)
     {
@@ -22,11 +26,13 @@ class FileShareController extends Controller
 
         $file = File::findOrFail($fileId);
 
+        // Tìm người nhận theo email
         $recipient = User::where('email', $request->email)->first();
         if (!$recipient) {
-            return redirect()->back()->withErrors(['email' => 'Recipient email not found.']);
+            return redirect()->back()->withErrors(['email' => __('common.recipient_email_not_found')]);
         }
 
+        // Tạo record chia sẻ
         $share = FileShare::create([
             'file_id' => $file->id,
             'shared_by' => Auth::id() ?? 1,
@@ -36,24 +42,30 @@ class FileShareController extends Controller
             'expires_at' => null,
         ]);
 
+        // Tạo URL chia sẻ
         $shareUrl = route('file.shared', $share->share_token);
 
+        // Đưa thông báo email vào hàng đợi
+        SendFileShareNotification::dispatch($share, $shareUrl);
+
         return redirect()->back()->with([
-            'success' => 'File shared successfully!',
+            'success' => __('common.file_shared_successfully'),
             'share_url' => $shareUrl,
         ]);
     }
 
     /**
-     * View shared file.
+     * Xem file được chia sẻ qua token.
      */
     public function show($token)
     {
+        // Tìm lượt chia sẻ theo token
         $share = FileShare::with('file')
             ->where('share_token', $token)
             ->active()
             ->firstOrFail();
 
+        // Kiểm tra lượt chia sẻ đã hết hạn chưa
         if ($share->isExpired()) {
             abort(403, 'This share link has expired.');
         }
@@ -62,35 +74,39 @@ class FileShareController extends Controller
     }
 
     /**
-     * Download shared file.
+     * Tải xuống file được chia sẻ.
      */
     public function download($token)
     {
+        // Tìm lượt chia sẻ theo token
         $share = FileShare::with('file')
             ->where('share_token', $token)
             ->active()
             ->firstOrFail();
 
+        // Kiểm tra lượt chia sẻ đã hết hạn chưa
         if ($share->isExpired()) {
             abort(403, 'This share link has expired.');
         }
 
+        // Kiểm tra quyền tải xuống
         if (!in_array($share->permission, ['download', 'edit'])) {
-            abort(403, 'You do not have permission to download this file.');
+            abort(403, __('common.no_permission_download'));
         }
 
         $file = $share->file;
         $filePath = storage_path('app/public/' . $file->path);
 
+        // Kiểm tra file có tồn tại không
         if (!file_exists($filePath)) {
-            abort(404, 'File not found.');
+            abort(404, __('common.file_not_found'));
         }
 
         return response()->download($filePath, $file->original_name);
     }
 
     /**
-     * Revoke file share.
+     * Thu hồi lượt chia sẻ file.
      */
     public function destroy(Request $request, $id)
     {
@@ -101,7 +117,7 @@ class FileShareController extends Controller
             FileShare::findOrFail($id)->delete();
         }
 
-        return redirect()->back()->with('success', 'Share revoked successfully!');
+        return redirect()->back()->with('success', __('common.share_revoked_successfully'));
     }
 
     /**

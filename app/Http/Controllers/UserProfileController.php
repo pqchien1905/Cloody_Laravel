@@ -18,8 +18,10 @@ class UserProfileController extends Controller
             ->sum('size');
         
         $storageUsedGB = $totalSize / (1024 * 1024 * 1024);
-        $storageLimit = 100;
-        $storagePercent = min(($storageUsedGB / $storageLimit) * 100, 100);
+        
+        // Lấy storage limit từ subscription của user
+        $storageLimit = $user->getStorageLimitGB();
+        $storagePercent = $storageLimit > 0 ? min(($storageUsedGB / $storageLimit) * 100, 100) : 0;
         
         $images = File::where('user_id', $user->id)
             ->where('is_trash', false)

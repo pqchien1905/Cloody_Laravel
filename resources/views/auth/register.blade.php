@@ -3,10 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Sign Up - CloudBOX</title>
+    <title>{{ __('common.sign_up') }} - Cloody</title>
     
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
+    <link rel="shortcut icon" href="{{ asset('assets/images/cloud.png') }}" type="image/png" />
+    <link rel="icon" href="{{ asset('assets/images/cloud.png') }}" type="image/png" />
+    <link rel="apple-touch-icon" href="{{ asset('assets/images/cloud.png') }}" />
     
     <link rel="stylesheet" href="{{ asset('assets/css/backend-plugin.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/backend.css') }}">
@@ -26,11 +28,11 @@
                         <div class="sign-user_card">
                             <!-- Logo -->
                             <div class="text-center mb-4">
-                                <img src="{{ asset('assets/images/logo.png') }}" class="img-fluid rounded-normal logo" alt="CloudBOX" style="max-width: 200px;">
+                                <img src="{{ asset('assets/images/Cloody.png') }}" class="img-fluid rounded-normal logo" alt="Cloody">
                             </div>
 
-                            <h3 class="mb-2">Sign Up</h3>
-                            <p class="text-muted">Create your CloudBOX account</p>
+                            <h3 class="mb-2">{{ __('common.sign_up') }}</h3>
+                            <p class="text-muted">{{ __('common.create_your_account') }}</p>
 
                             <!-- Register Form -->
                             <form method="POST" action="{{ route('register') }}">
@@ -46,7 +48,7 @@
                                                    placeholder=" " 
                                                    required 
                                                    autofocus>
-                                            <label>Full Name</label>
+                                            <label>{{ __('common.full_name') }}</label>
                                             @error('name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -62,7 +64,7 @@
                                                    value="{{ old('email') }}"
                                                    placeholder=" " 
                                                    required>
-                                            <label>Email Address</label>
+                                            <label>{{ __('common.email_address') }}</label>
                                             @error('email')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -77,7 +79,7 @@
                                                    name="password" 
                                                    placeholder=" " 
                                                    required>
-                                            <label>Password</label>
+                                            <label>{{ __('common.password') }}</label>
                                             @error('password')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -92,7 +94,7 @@
                                                    name="password_confirmation" 
                                                    placeholder=" " 
                                                    required>
-                                            <label>Confirm Password</label>
+                                            <label>{{ __('common.confirm_password') }}</label>
                                         </div>
                                     </div>
 
@@ -101,7 +103,7 @@
                                         <div class="custom-control custom-checkbox mb-3">
                                             <input type="checkbox" class="custom-control-input" id="terms" required>
                                             <label class="custom-control-label" for="terms">
-                                                I agree to the <a href="#" class="text-primary">Terms & Conditions</a>
+                                                {{ __('common.agree_to_terms') }} <a href="#" class="text-primary">{{ __('common.terms_and_conditions') }}</a>
                                             </label>
                                         </div>
                                     </div>
@@ -109,13 +111,13 @@
 
                                 <!-- Submit Button -->
                                 <button type="submit" class="btn btn-primary btn-block">
-                                    <i class="ri-user-add-line mr-2"></i>Create Account
+                                    <i class="ri-user-add-line mr-2"></i>{{ __('common.create_account') }}
                                 </button>
 
                                 <!-- Login Link -->
                                 <p class="mt-3 text-center">
-                                    Already have an account? 
-                                    <a href="{{ route('login') }}" class="text-primary font-weight-bold">Sign In</a>
+                                    {{ __('common.already_have_account') }} 
+                                    <a href="{{ route('login') }}" class="text-primary font-weight-bold">{{ __('common.sign_in') }}</a>
                                 </p>
                             </form>
                         </div>

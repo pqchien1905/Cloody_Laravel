@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Shared Files')
+@section('title', __('common.shared_files') . ' - Cloody')
 
 @push('styles')
 <style>
@@ -41,7 +41,7 @@
             <div class="card card-block card-stretch card-transparent">
                 <div class="card-header d-flex justify-content-between align-items-center pb-0">
                     <div class="header-title">
-                        <h4 class="card-title">Share With Me</h4>
+                        <h4 class="card-title">{{ __('common.share_with_me') }}</h4>
                     </div>
                 </div>
             </div>
@@ -54,14 +54,14 @@
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link {{ $tab === 'with-me' ? 'active' : '' }}" 
-                               href="{{ route('cloudbox.shared', ['tab' => 'with-me']) }}">
-                                <i class="ri-share-forward-line mr-2"></i>Shared with me
+                               href="{{ route('cloody.shared', ['tab' => 'with-me']) }}">
+                                <i class="ri-share-forward-line mr-2"></i>{{ __('common.shared_with_me') }}
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ $tab === 'by-me' ? 'active' : '' }}" 
-                               href="{{ route('cloudbox.shared', ['tab' => 'by-me']) }}">
-                                <i class="ri-share-line mr-2"></i>Shared by me
+                               href="{{ route('cloody.shared', ['tab' => 'by-me']) }}">
+                                <i class="ri-share-line mr-2"></i>{{ __('common.shared_by_me') }}
                             </a>
                         </li>
                     </ul>
@@ -72,17 +72,17 @@
                             <table class="table mb-0 table-borderless">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Name</th>
+                                        <th scope="col">{{ __('common.name') }}</th>
                                         @if($tab === 'with-me')
-                                            <th scope="col">Shared By</th>
-                                            <th scope="col">Permission</th>
+                                            <th scope="col">{{ __('common.shared_by') }}</th>
+                                            <th scope="col">{{ __('common.permission') }}</th>
                                         @else
-                                            <th scope="col">Shared With</th>
-                                            <th scope="col">Permission</th>
+                                            <th scope="col">{{ __('common.shared_with') }}</th>
+                                            <th scope="col">{{ __('common.permission') }}</th>
                                         @endif
-                                        <th scope="col">Shared Date</th>
-                                        <th scope="col">Size</th>
-                                        <th scope="col" class="text-center">Actions</th>
+                                        <th scope="col">{{ __('common.shared_date') }}</th>
+                                        <th scope="col">{{ __('common.size') }}</th>
+                                        <th scope="col" class="text-center">{{ __('common.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -93,7 +93,7 @@
                                                 @if($share->type === 'folder')
                                                     {{-- Folder Icon --}}
                                                     <i class="ri-folder-line text-primary mr-3" style="font-size: 24px;"></i>
-                                                    <a href="{{ route('cloudbox.folders.show', $share->folder->id) }}" class="text-dark">
+                                                    <a href="{{ route('cloody.folders.show', $share->folder->id) }}" class="text-dark">
                                                         <span>{{ $share->folder->name }}</span>
                                                     </a>
                                                 @else
@@ -125,7 +125,7 @@
                                                     
                                                     <i class="{{ $iconClass }} {{ $iconColor }} mr-3" style="font-size: 24px;"></i>
                                                     @if($share->file)
-                                                    <a href="{{ route('cloudbox.files.view', $share->file->id) }}" class="text-dark">
+                                                    <a href="{{ route('cloody.files.view', $share->file->id) }}" class="text-dark">
                                                         <span>{{ $share->file->original_name }}</span>
                                                     </a>
                                                     @endif
@@ -147,26 +147,26 @@
                                                 @if($share->sharedWith)
                                                     {{ $share->sharedWith->name }} ({{ $share->sharedWith->email }})
                                                 @else
-                                                    <span class="text-muted">Public Link</span>
+                                                    <span class="text-muted">{{ __('common.public_link') }}</span>
                                                 @endif
                                             </td>
                                         @endif
                                         <td>
                                             @if($share->permission === 'view')
                                                 <span class="badge badge-primary">
-                                                    <i class="ri-eye-line"></i> View Only
+                                                    <i class="ri-eye-line"></i> {{ __('common.view_only') }}
                                                 </span>
                                             @elseif($share->permission === 'edit')
                                                 <span class="badge badge-success">
-                                                    <i class="ri-pencil-line"></i> Can Edit
+                                                    <i class="ri-pencil-line"></i> {{ __('common.can_edit') }}
                                                 </span>
                                             @else
                                                 <span class="badge badge-info">
-                                                    <i class="ri-download-line"></i> Can Download
+                                                    <i class="ri-download-line"></i> {{ __('common.can_download') }}
                                                 </span>
                                             @endif
                                         </td>
-                                        <td>{{ $share->created_at->format('M d, Y') }}</td>
+                                        <td>{{ $share->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y') }}</td>
                                         <td>
                                             @if($share->type === 'folder')
                                                 <span class="text-muted">-</span>
@@ -178,17 +178,17 @@
                                             <div class="d-flex align-items-center justify-content-center" style="gap: 8px;">
                                                 @if($share->type === 'folder')
                                                     {{-- Folder Actions --}}
-                                                    <a href="{{ route('cloudbox.folders.show', $share->folder->id) }}" 
+                                                    <a href="{{ route('cloody.folders.show', $share->folder->id) }}" 
                                                        class="btn btn-sm btn-primary" 
-                                                       title="View">
+                                                       title="{{ __('common.view') }}">
                                                         <i class="ri-folder-open-line"></i>
                                                     </a>
                                                 @else
                                                     {{-- File Actions --}}
                                                     @if($share->file)
-                                                    <a href="{{ route('cloudbox.files.download', $share->file->id) }}" 
+                                                    <a href="{{ route('cloody.files.download', $share->file->id) }}" 
                                                        class="btn btn-sm btn-success" 
-                                                       title="Download">
+                                                       title="{{ __('common.download') }}">
                                                         <i class="ri-download-line"></i>
                                                     </a>
                                                     @endif
@@ -196,20 +196,20 @@
 
                                                 @if($tab === 'by-me')
                                                 <a href="#" 
-                                                   onclick="event.preventDefault(); if(confirm('Revoke share access?')) document.getElementById('revoke-form-{{ $share->type }}-{{ $share->id }}').submit();"
+                                                   onclick="event.preventDefault(); if(confirm('{{ __('common.revoke_share_access') }}')) document.getElementById('revoke-form-{{ $share->type }}-{{ $share->id }}').submit();"
                                                    class="btn btn-sm btn-danger" 
-                                                   title="Revoke">
+                                                   title="{{ __('common.revoke') }}">
                                                     <i class="ri-close-line"></i>
                                                 </a>
 
                                                 @if($share->type === 'folder')
-                                                <form id="revoke-form-folder-{{ $share->id }}" action="{{ route('cloudbox.shares.revoke', $share->id) }}" method="POST" style="display: none;">
+                                                <form id="revoke-form-folder-{{ $share->id }}" action="{{ route('cloody.shares.revoke', $share->id) }}" method="POST" style="display: none;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <input type="hidden" name="type" value="folder">
                                                 </form>
                                                 @else
-                                                <form id="revoke-form-file-{{ $share->id }}" action="{{ route('cloudbox.shares.revoke', $share->id) }}" method="POST" style="display: none;">
+                                                <form id="revoke-form-file-{{ $share->id }}" action="{{ route('cloody.shares.revoke', $share->id) }}" method="POST" style="display: none;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <input type="hidden" name="type" value="file">
@@ -227,7 +227,7 @@
                         <!-- Pagination -->
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <div>
-                                Showing {{ $shares->firstItem() ?? 0 }} to {{ $shares->lastItem() ?? 0 }} of {{ $shares->total() }} shares
+                                {{ __('common.showing_to_of', ['first' => $shares->firstItem() ?? 0, 'last' => $shares->lastItem() ?? 0, 'total' => $shares->total()]) }}
                             </div>
                             <div>
                                 {{ $shares->appends(['tab' => $tab])->links() }}
@@ -238,11 +238,11 @@
                         <div class="text-center py-5">
                             <i class="las la-share-alt" style="font-size: 64px; color: #ccc;"></i>
                             @if($tab === 'with-me')
-                                <h4 class="mt-3">No Files Shared With You</h4>
-                                <p class="text-muted">Files that others share with you will appear here.</p>
+                                <h4 class="mt-3">{{ __('common.no_files_shared_with_you') }}</h4>
+                                <p class="text-muted">{{ __('common.files_shared_with_you_will_appear') }}</p>
                             @else
-                                <h4 class="mt-3">You Haven't Shared Any Files</h4>
-                                <p class="text-muted">Files you share with others will appear here.</p>
+                                <h4 class="mt-3">{{ __('common.you_havent_shared_any_files') }}</h4>
+                                <p class="text-muted">{{ __('common.files_you_share_will_appear') }}</p>
                             @endif
                         </div>
                         @endif

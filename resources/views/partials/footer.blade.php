@@ -10,7 +10,7 @@
             </div>
             <div class="col-lg-6 text-right">
                 <span class="mr-1">
-                    Copyright {{ date('Y') }} <a href="#">CloudBOX</a> All Rights Reserved.
+                    Copyright {{ date('Y') }} <a href="#">Cloody</a> All Rights Reserved.
                 </span>
             </div>
         </div>

@@ -26,7 +26,7 @@ class PasswordUpdateTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('cloody.user.profile'));
 
         $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
     }

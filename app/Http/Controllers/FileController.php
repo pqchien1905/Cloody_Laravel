@@ -9,23 +9,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Controller - Xử lý các chức năng liên quan đến file
+ */
 class FileController extends Controller
 {
     /**
-     * Display all files page.
+     * Hiển thị trang danh sách tất cả các file.
      */
     public function index(Request $request)
     {
+        // Tạo query cơ bản với các quan hệ
         $query = File::with(['user', 'folder'])
             ->where('user_id', Auth::id() ?? 1)
             ->active();
 
-    // Lọc theo thư mục
+        // Lọc theo thư mục
         if ($request->has('folder_id') && $request->folder_id) {
             $query->where('folder_id', $request->folder_id);
         }
 
-    // Lọc theo category
+        // Lọc theo danh mục (category)
         if ($request->has('category') && $request->category) {
             $category = Category::where('slug', $request->category)->where('is_active', true)->first();
             if ($category && !empty($category->extensions)) {
@@ -33,7 +37,7 @@ class FileController extends Controller
             }
         }
 
-    // Tìm kiếm
+        // Tìm kiếm theo tên file
         if ($request->has('search') && $request->search) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
@@ -41,18 +45,20 @@ class FileController extends Controller
             });
         }
 
-    // Sắp xếp
+        // Sắp xếp file
         $sortBy = $request->get('sort', 'created_at');
         $sortOrder = $request->get('order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
+        // Phân trang danh sách file
         $files = $query->paginate(20);
+        // Lấy danh sách thư mục gốc để hiển thị
         $folders = Folder::where('user_id', Auth::id() ?? 1)->active()->root()->get();
         
-        // Lấy danh sách categories active để hiển thị trong dropdown
+        // Lấy danh sách các danh mục đang hoạt động để hiển thị trong dropdown
         $categories = Category::where('is_active', true)->orderBy('order')->get();
 
-    // Thống kê
+        // Tính toán thống kê
         $stats = [
             'total' => File::where('user_id', Auth::id() ?? 1)->active()->count(),
             'size' => File::where('user_id', Auth::id() ?? 1)->active()->sum('size'),
@@ -64,15 +70,16 @@ class FileController extends Controller
     }
 
     /**
-     * Display shared files and folders.
+     * Hiển thị các file và thư mục được chia sẻ.
      */
     public function shared(Request $request)
     {
         $userId = Auth::id() ?? 1;
         $user = Auth::user();
-    $tab = $request->get('tab', 'with-me'); // with-me | by-me
+        // Xác định tab hiện tại: 'with-me' (chia sẻ với tôi) hoặc 'by-me' (tôi chia sẻ)
+        $tab = $request->get('tab', 'with-me');
         
-    // Lấy các chia sẻ file và thư mục liên quan tới người dùng
+        // Lấy các lượt chia sẻ file và thư mục liên quan đến người dùng
         if ($tab === 'with-me') {
             // Các file được chia sẻ VỚI tôi (tôi là người nhận)
             $fileShares = \App\Models\FileShare::with(['file.user', 'file.folder', 'sharedBy', 'sharedWith'])
@@ -111,15 +118,16 @@ class FileController extends Controller
                 });
         }
 
-    // Gộp và sắp xếp theo created_at
+        // Gộp file và folder shares lại và sắp xếp theo thời gian tạo (mới nhất trước)
         $shares = $fileShares->concat($folderShares)->sortByDesc('created_at');
         
-    // Phân trang thủ công
+        // Phân trang thủ công vì dữ liệu đã được lấy ra
         $perPage = 20;
         $currentPage = request()->get('page', 1);
         $total = $shares->count();
         $shares = $shares->forPage($currentPage, $perPage)->values();
         
+        // Tạo paginator để hiển thị phân trang
         $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
             $shares,
             $total,
@@ -135,24 +143,25 @@ class FileController extends Controller
     }
 
     /**
-     * Display recent files and folders (last 30 days).
+     * Hiển thị các file và thư mục gần đây (30 ngày vừa qua).
      */
     public function recent(Request $request)
     {
         $userId = Auth::id() ?? 1;
-    $days = 30; // Các file/thư mục gần đây trong 30 ngày gần nhất
+        // Các file/thư mục gần đây trong 30 ngày gần nhất
+        $days = 30;
         
-    // Lọc theo category
+        // Lọc theo danh mục
         $category = $request->get('category');
         
-    // Tìm kiếm
+        // Tìm kiếm
         $search = $request->get('search');
         
-    // Sắp xếp
+        // Sắp xếp
         $sort = $request->get('sort', 'created_at');
         $order = $request->get('order', 'desc');
 
-    // Truy vấn file gần đây
+        // Truy vấn các file gần đây
         $filesQuery = File::with(['user', 'folder'])
             ->where('user_id', $userId)
             ->where('created_at', '>=', now()->subDays($days))
@@ -205,10 +214,11 @@ class FileController extends Controller
     }
 
     /**
-     * Show favorites.
+     * Hiển thị các file và thư mục yêu thích.
      */
     public function favorites()
     {
+        // Lấy danh sách file yêu thích
         $files = File::with(['user', 'folder'])
             ->where('user_id', Auth::id() ?? 1)
             ->where('is_favorite', true)
@@ -216,7 +226,7 @@ class FileController extends Controller
             ->latest()
             ->paginate(20);
 
-    // Thư mục yêu thích để hiển thị
+        // Thư mục yêu thích để hiển thị
         $favoriteFolders = Folder::withCount(['files' => function ($q) {
                 $q->where('is_trash', false);
             }])
@@ -226,7 +236,7 @@ class FileController extends Controller
             ->latest()
             ->get();
 
-        // All root folders for upload modal dropdown selection
+        // Tất cả các thư mục gốc cho dropdown lựa chọn trong modal upload
         $folders = Folder::where('user_id', Auth::id() ?? 1)
             ->active()
             ->root()
@@ -242,22 +252,25 @@ class FileController extends Controller
     }
 
     /**
-     * Show trash.
+     * Hiển thị thùng rác chứa các file và thư mục đã bị xóa.
      */
     public function trash(Request $request)
     {
         $userId = Auth::id() ?? 1;
-        $item = $request->get('item', 'all'); // all | files | folders
+        // Loại item: 'all' | 'files' | 'folders'
+        $item = $request->get('item', 'all');
         $category = $request->get('category');
         $search = $request->get('search');
-        $sort = $request->get('sort', 'trashed_at'); // name|size|trashed_at
+        // Tiêu chí sắp xếp: 'name' | 'size' | 'trashed_at'
+        $sort = $request->get('sort', 'trashed_at');
         $order = $request->get('order', 'desc');
 
-    // File trong thùng rác
+        // Query các file trong thùng rác
         $filesQuery = File::with(['user', 'folder'])
             ->where('user_id', $userId)
             ->where('is_trash', true);
 
+        // Lọc theo tìm kiếm
         if ($search) {
             $filesQuery->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -265,6 +278,7 @@ class FileController extends Controller
             });
         }
 
+        // Lọc theo danh mục
         if ($category) {
             $categoryModel = Category::where('slug', $category)->where('is_active', true)->first();
             if ($categoryModel && !empty($categoryModel->extensions)) {
@@ -272,24 +286,27 @@ class FileController extends Controller
             }
         }
 
+        // Sắp xếp file
         $fileSort = in_array($sort, ['name', 'size', 'trashed_at']) ? $sort : 'trashed_at';
         $filesQuery->orderBy($fileSort, $order);
         $files = $filesQuery->paginate(20)->appends($request->query());
 
-    // Thư mục trong thùng rác
+        // Query các thư mục trong thùng rác
         $foldersQuery = \App\Models\Folder::query()
             ->where('user_id', $userId)
             ->where('is_trash', true);
 
+        // Lọc theo tìm kiếm
         if ($search) {
             $foldersQuery->where('name', 'like', "%{$search}%");
         }
 
+        // Sắp xếp thư mục
         $folderSort = in_array($sort, ['name', 'trashed_at']) ? $sort : 'trashed_at';
         $foldersQuery->orderBy($folderSort, $order);
         $folders = $foldersQuery->paginate(20)->appends($request->query());
 
-        // Lấy danh sách categories active
+        // Lấy danh sách các danh mục đang hoạt động
         $categories = Category::where('is_active', true)->orderBy('order')->get();
 
         $filter = compact('item', 'category', 'search', 'sort', 'order');
@@ -298,25 +315,28 @@ class FileController extends Controller
     }
 
     /**
-     * Clean up the trash: permanently delete all trashed files and folders for the current user.
+     * Dọn dẹp thùng rác: Xóa vĩnh viễn tất cả file và thư mục trong thùng rác của người dùng hiện tại.
      */
     public function cleanupTrash(Request $request)
     {
         $userId = Auth::id() ?? 1;
 
-    // 1) Xóa vĩnh viễn file trong thùng rác (xóa khỏi storage + db)
+        // 1) Xóa vĩnh viễn các file trong thùng rác (xóa khỏi storage + database)
         $files = File::where('user_id', $userId)->where('is_trash', true)->get();
         foreach ($files as $file) {
+            // Xóa file từ storage nếu tồn tại
             if ($file->path && Storage::disk('public')->exists($file->path)) {
                 Storage::disk('public')->delete($file->path);
             }
+            // Xóa record khỏi database
             $file->delete();
         }
 
-    // 2) Xóa vĩnh viễn thư mục trong thùng rác từ dưới lên (xóa lá trước)
-    // Tiếp tục xóa các thư mục lá trong thùng rác cho đến khi không còn
+        // 2) Xóa vĩnh viễn các thư mục trong thùng rác từ dưới lên (xóa thư mục lá trước)
+        // Tiếp tục xóa các thư mục lá trong thùng rác cho đến khi không còn
         $safetyCounter = 0;
         do {
+            // Lấy các thư mục lá (không có thư mục con trong thùng rác)
             $leafFolders = Folder::where('user_id', $userId)
                 ->where('is_trash', true)
                 ->whereDoesntHave('children', function ($q) {
@@ -324,10 +344,12 @@ class FileController extends Controller
                 })
                 ->get();
 
+            // Xóa từng thư mục lá
             foreach ($leafFolders as $folder) {
                 $folder->delete();
             }
 
+            // Tăng bộ đếm an toàn để tránh vòng lặp vô hạn
             $safetyCounter++;
         } while ($leafFolders->count() > 0 && $safetyCounter < 200);
 

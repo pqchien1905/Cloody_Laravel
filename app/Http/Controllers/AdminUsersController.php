@@ -72,7 +72,7 @@ class AdminUsersController extends Controller
         $user->is_admin = (bool)($data['is_admin'] ?? false);
         $user->save();
 
-        return redirect()->route('admin.users.index')->with('status', 'User created successfully');
+        return redirect()->route('admin.users.index')->with('status', __('common.user_created_successfully'));
     }
 
     public function edit(User $user)
@@ -97,16 +97,16 @@ class AdminUsersController extends Controller
         $user->is_admin = (bool)($data['is_admin'] ?? false);
         $user->save();
 
-        return redirect()->route('admin.users.index')->with('status', 'User updated successfully');
+        return redirect()->route('admin.users.index')->with('status', __('common.user_updated_successfully'));
     }
 
     public function destroy(User $user)
     {
         $current = request()->user();
         if ($current && $current->id === $user->id) {
-            return redirect()->back()->with('error', 'You cannot delete your own account');
+            return redirect()->back()->with('error', __('common.cannot_delete_own_account'));
         }
         $user->delete();
-        return redirect()->route('admin.users.index')->with('status', 'User deleted successfully');
+        return redirect()->route('admin.users.index')->with('status', __('common.user_deleted_successfully'));
     }
 }

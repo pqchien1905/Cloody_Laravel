@@ -6,8 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Model Folder - Quản lý thông tin thư mục trong hệ thống
+ */
 class Folder extends Model
 {
+    /**
+     * Các thuộc tính có thể gán hàng loạt
+     */
     protected $fillable = [
         'user_id',
         'parent_id',
@@ -20,6 +26,9 @@ class Folder extends Model
         'trashed_at',
     ];
 
+    /**
+     * Các thuộc tính cần ép kiểu
+     */
     protected $casts = [
         'is_favorite' => 'boolean',
         'is_trash' => 'boolean',
@@ -28,7 +37,7 @@ class Folder extends Model
     ];
 
     /**
-     * Get the user that owns the folder.
+     * Lấy người dùng sở hữu thư mục này.
      */
     public function user(): BelongsTo
     {
@@ -36,7 +45,7 @@ class Folder extends Model
     }
 
     /**
-     * Get the parent folder.
+     * Lấy thư mục cha.
      */
     public function parent(): BelongsTo
     {
@@ -44,7 +53,7 @@ class Folder extends Model
     }
 
     /**
-     * Get child folders.
+     * Lấy các thư mục con.
      */
     public function children(): HasMany
     {
@@ -52,7 +61,7 @@ class Folder extends Model
     }
 
     /**
-     * Get files in this folder.
+     * Lấy các file trong thư mục này.
      */
     public function files(): HasMany
     {
@@ -60,7 +69,17 @@ class Folder extends Model
     }
 
     /**
-     * Scope to get only non-trashed folders.
+     * Lấy tất cả các nhóm mà thư mục này được chia sẻ với.
+     */
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_folders')
+            ->withPivot('shared_by', 'permission')
+            ->withTimestamps();
+    }
+
+    /**
+     * Scope để lấy chỉ các thư mục chưa bị xóa (không ở thùng rác).
      */
     public function scopeActive($query)
     {
@@ -68,7 +87,7 @@ class Folder extends Model
     }
 
     /**
-     * Scope to get root folders (no parent).
+     * Scope để lấy các thư mục gốc (không có thư mục cha).
      */
     public function scopeRoot($query)
     {

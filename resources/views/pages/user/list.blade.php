@@ -12,7 +12,7 @@
                         <h4 class="card-title">User List</h4>
                     </div>
                     <div>
-                        <a href="{{ route('cloudbox.user.add') }}" class="btn btn-primary">
+                        <a href="{{ route('cloody.user.add') }}" class="btn btn-primary">
                             <i class="ri-add-line"></i> Add New User
                         </a>
                     </div>
@@ -38,7 +38,7 @@
                                             <div>Admin User</div>
                                         </div>
                                     </td>
-                                    <td>admin@cloudbox.com</td>
+                                    <td>admin@cloody.com</td>
                                     <td><span class="badge badge-primary">Admin</span></td>
                                     <td>Jan 2024</td>
                                     <td><span class="badge badge-success">Active</span></td>
@@ -54,7 +54,7 @@
                                             <div>Test User</div>
                                         </div>
                                     </td>
-                                    <td>test@cloudbox.com</td>
+                                    <td>test@cloody.com</td>
                                     <td><span class="badge badge-info">User</span></td>
                                     <td>Jan 2024</td>
                                     <td><span class="badge badge-success">Active</span></td>

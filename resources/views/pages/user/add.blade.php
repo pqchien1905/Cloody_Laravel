@@ -65,7 +65,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Add User</button>
-                            <a href="{{ route('cloudbox.user.list') }}" class="btn btn-secondary">Cancel</a>
+                            <a href="{{ route('cloody.user.list') }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>

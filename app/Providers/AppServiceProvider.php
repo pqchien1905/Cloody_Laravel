@@ -34,18 +34,26 @@ class AppServiceProvider extends ServiceProvider
         // Chia sẻ dữ liệu bộ nhớ với partial thanh bên
         View::composer('partials.sidebar', function ($view) {
             $storageUsedGB = 0;
-            $storageLimit = 100;
+            $storageLimit = 1; // Default 1GB
             $storagePercent = 0;
             
             if (Auth::check()) {
-                $userId = Auth::id();
+                $user = Auth::user();
+                $userId = $user->id;
+                
+                // Lấy storage đã sử dụng
                 $storageUsed = File::where('user_id', $userId)
                     ->where('is_trash', false)
                     ->sum('size');
                 
                 // Chuyển đổi sang GB
                 $storageUsedGB = $storageUsed / (1024 * 1024 * 1024);
-                $storagePercent = min(($storageUsedGB / $storageLimit) * 100, 100);
+                
+                // Lấy storage limit từ subscription của user
+                $storageLimit = $user->getStorageLimitGB();
+                
+                // Tính phần trăm
+                $storagePercent = $storageLimit > 0 ? min(($storageUsedGB / $storageLimit) * 100, 100) : 0;
             }
             
             $view->with([

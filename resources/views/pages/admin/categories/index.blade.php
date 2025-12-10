@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Manage Categories - Admin')
+@section('title', __('common.manage_categories') . ' - Admin')
 
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-12 d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">File Categories</h4>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createCategoryModal"><i class="las la-plus mr-1"></i> New Category</button>
+            <h4 class="mb-0">{{ __('common.file_categories') }}</h4>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createCategoryModal"><i class="las la-plus mr-1"></i> {{ __('common.new_category') }}</button>
         </div>
 
         <div class="col-12">
@@ -23,24 +23,24 @@
                 <div class="card-body">
                     <form method="GET" action="{{ route('admin.categories.index') }}" class="row align-items-end">
                         <div class="col-md-6 mb-2 mb-md-0">
-                            <label for="search" class="small text-muted mb-1">Search</label>
-                            <input type="text" class="form-control" id="search" name="search" placeholder="Category name or description..." value="{{ request('search') }}">
+                            <label for="search" class="small text-muted mb-1">{{ __('common.search') }}</label>
+                            <input type="text" class="form-control" id="search" name="search" placeholder="{{ __('common.category_name_or_description') }}" value="{{ request('search') }}">
                         </div>
                         <div class="col-md-4 mb-2 mb-md-0">
-                            <label for="status" class="small text-muted mb-1">Status</label>
+                            <label for="status" class="small text-muted mb-1">{{ __('common.status') }}</label>
                             <select class="form-control" id="status" name="status">
-                                <option value="">All Categories</option>
-                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active Only</option>
-                                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive Only</option>
+                                <option value="">{{ __('common.all_categories') }}</option>
+                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ __('common.active_only') }}</option>
+                                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>{{ __('common.inactive_only') }}</option>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary btn-block"><i class="las la-search mr-1"></i> Filter</button>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="las la-search mr-1"></i> {{ __('common.filter') }}</button>
                         </div>
                     </form>
                     @if(request()->hasAny(['search', 'status']))
                         <div class="mt-2">
-                            <a href="{{ route('admin.categories.index') }}" class="btn btn-sm btn-outline-secondary"><i class="las la-times mr-1"></i> Clear Filters</a>
+                            <a href="{{ route('admin.categories.index') }}" class="btn btn-sm btn-outline-secondary"><i class="las la-times mr-1"></i> {{ __('common.clear_filters') }}</a>
                         </div>
                     @endif
                 </div>
@@ -52,12 +52,12 @@
                         <table class="table mb-0 table-borderless">
                             <thead>
                                 <tr>
-                                    <th style="width: 50px;">Order</th>
-                                    <th>Icon</th>
-                                    <th>Name</th>
-                                    <th>Extensions</th>
-                                    <th>Status</th>
-                                    <th class="text-right">Actions</th>
+                                    <th style="width: 50px;">{{ __('common.order') }}</th>
+                                    <th>{{ __('common.icon') }}</th>
+                                    <th>{{ __('common.name') }}</th>
+                                    <th>{{ __('common.extensions') }}</th>
+                                    <th>{{ __('common.status') }}</th>
+                                    <th class="text-right">{{ __('common.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -95,9 +95,9 @@
                                     </td>
                                     <td>
                                         @if($category->is_active)
-                                            <span class="badge badge-success">Active</span>
+                                            <span class="badge badge-success">{{ __('common.active') }}</span>
                                         @else
-                                            <span class="badge badge-secondary">Inactive</span>
+                                            <span class="badge badge-secondary">{{ __('common.inactive') }}</span>
                                         @endif
                                     </td>
                                     <td class="text-right">
@@ -106,7 +106,7 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <tr><td colspan="6" class="text-center py-4 text-muted">No categories found.</td></tr>
+                                <tr><td colspan="6" class="text-center py-4 text-muted">{{ __('common.no_categories_found') }}</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -125,7 +125,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createCategoryModalLabel">Create New Category</h5>
+                <h5 class="modal-title" id="createCategoryModalLabel">{{ __('common.create_new_category') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -136,7 +136,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="create_name">Name <span class="text-danger">*</span></label>
+                                <label for="create_name">{{ __('common.name') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="create_name" name="name" value="{{ old('name') }}" required>
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -145,12 +145,12 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="create_slug">Slug</label>
-                                <input type="text" class="form-control @error('slug') is-invalid @enderror" id="create_slug" name="slug" value="{{ old('slug') }}" placeholder="Auto-generated if empty">
+                                <label for="create_slug">{{ __('common.slug') }}</label>
+                                <input type="text" class="form-control @error('slug') is-invalid @enderror" id="create_slug" name="slug" value="{{ old('slug') }}" placeholder="{{ __('common.auto_generated_if_empty') }}">
                                 @error('slug')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Leave blank to auto-generate from name</small>
+                                <small class="text-muted">{{ __('common.leave_blank_to_auto_generate') }}</small>
                             </div>
                         </div>
                     </div>
@@ -158,46 +158,46 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="create_icon">Icon Class</label>
+                                <label for="create_icon">{{ __('common.icon_class') }}</label>
                                 <input type="text" class="form-control" id="create_icon" name="icon" value="{{ old('icon') }}" placeholder="e.g., ri-file-pdf-line">
-                                <small class="text-muted">Remixicon class name</small>
+                                <small class="text-muted">{{ __('common.remixicon_class_name') }}</small>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="create_color">Color</label>
+                                <label for="create_color">{{ __('common.color') }}</label>
                                 <input type="color" class="form-control" id="create_color" name="color" value="{{ old('color', '#667eea') }}" style="height: 38px;">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="create_order">Order</label>
+                                <label for="create_order">{{ __('common.order') }}</label>
                                 <input type="number" class="form-control" id="create_order" name="order" value="{{ old('order', 0) }}" min="0">
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="create_extensions">File Extensions</label>
+                        <label for="create_extensions">{{ __('common.file_extensions') }}</label>
                         <input type="text" class="form-control" id="create_extensions" name="extensions" value="{{ old('extensions') }}" placeholder="e.g., pdf, doc, docx">
-                        <small class="text-muted">Comma-separated list of extensions</small>
+                        <small class="text-muted">{{ __('common.comma_separated_extensions') }}</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="create_description">Description</label>
+                        <label for="create_description">{{ __('common.description') }}</label>
                         <textarea class="form-control" id="create_description" name="description" rows="3">{{ old('description') }}</textarea>
                     </div>
 
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" id="create_is_active" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
-                            <label class="custom-control-label" for="create_is_active">Active</label>
+                            <label class="custom-control-label" for="create_is_active">{{ __('common.active') }}</label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Category</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.create_category') }}</button>
                 </div>
             </form>
         </div>
@@ -210,7 +210,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editCategoryModalLabel{{ $category->id }}">Edit Category: {{ $category->name }}</h5>
+                <h5 class="modal-title" id="editCategoryModalLabel{{ $category->id }}">{{ __('common.edit_category') }}: {{ $category->name }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -282,8 +282,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Category</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.update_category') }}</button>
                 </div>
             </form>
         </div>
@@ -295,7 +295,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title text-white" id="deleteCategoryModalLabel{{ $category->id }}">Delete Category</h5>
+                <h5 class="modal-title text-white" id="deleteCategoryModalLabel{{ $category->id }}">{{ __('common.delete_category') }}</h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -306,13 +306,13 @@
                 <div class="modal-body">
                     <div class="alert alert-danger">
                         <i class="ri-error-warning-line mr-2"></i>
-                        <strong>Warning:</strong> This action cannot be undone!
+                        <strong>{{ __('common.warning') }}:</strong> {{ __('common.warning_action_cannot_undo') }}
                     </div>
-                    <p>Are you sure you want to delete category <strong>{{ $category->name }}</strong>?</p>
+                    <p>{{ __('common.delete_category_confirm') }} <strong>{{ $category->name }}</strong>?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Delete Category</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel') }}</button>
+                    <button type="submit" class="btn btn-danger">{{ __('common.delete_category') }}</button>
                 </div>
             </form>
         </div>

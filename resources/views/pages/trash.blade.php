@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Trash - CloudBOX')
+@section('title', __('common.trash') . ' - Cloody')
 
 @section('content')
 <div class="container-fluid">
@@ -10,16 +10,16 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="header-title">
                         <h4 class="card-title">
-                            <i class="ri-delete-bin-line text-danger"></i> Trash
+                            <i class="ri-delete-bin-line text-danger"></i> {{ __('common.trash') }}
                         </h4>
                     </div>
                     @if($files->count() > 0 || $folders->count() > 0)
                         <div class="card-header-toolbar d-flex flex-column align-items-end text-right">
                             <div class="alert alert-warning mb-2">
-                                <small><i class="ri-information-line"></i> Items in trash will be automatically deleted after 30 days</small>
+                                <small><i class="ri-information-line"></i> {{ __('common.items_in_trash_will_be_deleted') }}</small>
                             </div>
                             <button id="btn-clean-trash" class="btn btn-danger">
-                                <i class="ri-delete-bin-6-line"></i> Clean up the trash
+                                <i class="ri-delete-bin-6-line"></i> {{ __('common.clean_up_trash') }}
                             </button>
                         </div>
                     @endif
@@ -33,11 +33,11 @@
                     @endif
 
                     <!-- Filters -->
-                    <form method="GET" action="{{ route('cloudbox.trash') }}" class="mb-3">
+                    <form method="GET" action="{{ route('cloody.trash') }}" class="mb-3">
                         <div class="form-row">
                             <div class="col-md-4 mb-2">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="search" placeholder="Search in trash..." value="{{ request('search') }}">
+                                    <input type="text" class="form-control" name="search" placeholder="{{ __('common.search_in_trash') }}" value="{{ request('search') }}">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="ri-search-line"></i>
@@ -47,14 +47,14 @@
                             </div>
                             <div class="col-md-3 mb-2">
                                 <select class="form-control" name="item" onchange="this.form.submit()">
-                                    <option value="all" {{ request('item', 'all') == 'all' ? 'selected' : '' }}>All Items</option>
-                                    <option value="files" {{ request('item') == 'files' ? 'selected' : '' }}>Files only</option>
-                                    <option value="folders" {{ request('item') == 'folders' ? 'selected' : '' }}>Folders only</option>
+                                    <option value="all" {{ request('item', 'all') == 'all' ? 'selected' : '' }}>{{ __('common.all_items') }}</option>
+                                    <option value="files" {{ request('item') == 'files' ? 'selected' : '' }}>{{ __('common.files_only') }}</option>
+                                    <option value="folders" {{ request('item') == 'folders' ? 'selected' : '' }}>{{ __('common.folders_only') }}</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-2">
                                 <select class="form-control" name="category" onchange="this.form.submit()">
-                                    <option value="">All Types</option>
+                                    <option value="">{{ __('common.all_types') }}</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'selected' : '' }}>
                                             {{ $category->name }}
@@ -64,9 +64,9 @@
                             </div>
                             <div class="col-md-2 mb-2">
                                 <select class="form-control" name="sort" onchange="this.form.submit()">
-                                    <option value="trashed_at" {{ request('sort', 'trashed_at') == 'trashed_at' ? 'selected' : '' }}>Deleted date</option>
-                                    <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Name</option>
-                                    <option value="size" {{ request('sort') == 'size' ? 'selected' : '' }}>Size (files)</option>
+                                    <option value="trashed_at" {{ request('sort', 'trashed_at') == 'trashed_at' ? 'selected' : '' }}>{{ __('common.deleted_date') }}</option>
+                                    <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>{{ __('common.name') }}</option>
+                                    <option value="size" {{ request('sort') == 'size' ? 'selected' : '' }}>{{ __('common.size') }} ({{ __('common.files') }})</option>
                                 </select>
                             </div>
                         </div>
@@ -75,19 +75,19 @@
                     @if($files->count() > 0 || $folders->count() > 0)
                         <!-- Folders Section -->
                         @if(request('item', 'all') !== 'files' && $folders->count() > 0)
-                            <h5 class="mb-3"><i class="ri-folder-line"></i> Folders</h5>
+                            <h5 class="mb-3"><i class="ri-folder-line"></i> {{ __('common.folders') }}</h5>
                             <!-- Bulk Actions Bar: Folders in Trash -->
                             <div id="trashBulkBarFolders" class="alert alert-primary d-none mb-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span><strong><span id="trashSelectedFolders">0</span> folder(s) selected</strong></span>
+                                    <span><strong><span id="trashSelectedFolders">0</span> {{ __('common.folder') }}(s) {{ __('common.select') }}</strong></span>
                                     <div>
                                         <button type="button" class="btn btn-sm btn-success" id="trashRestoreFoldersBtn">
-                                            <i class="ri-arrow-go-back-line"></i> Restore Selected
+                                            <i class="ri-arrow-go-back-line"></i> {{ __('common.restore_selected') }}
                                         </button>
                                         <button type="button" class="btn btn-sm btn-danger" id="trashDeleteFoldersBtn">
-                                            <i class="ri-delete-bin-6-line"></i> Delete Permanently
+                                            <i class="ri-delete-bin-6-line"></i> {{ __('common.delete_permanently') }}
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-secondary" id="trashClearFoldersBtn">Clear Selection</button>
+                                        <button type="button" class="btn btn-sm btn-secondary" id="trashClearFoldersBtn">{{ __('common.clear_selection') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -96,11 +96,11 @@
                                     <thead class="table-color-heading">
                                         <tr>
                                             <th style="width: 40px;"><input type="checkbox" id="trashSelectAllFolders"></th>
-                                            <th>Folder Name</th>
-                                            <th>Items</th>
-                                            <th>Deleted</th>
-                                            <th>Days Remaining</th>
-                                            <th>Actions</th>
+                                            <th>{{ __('common.folder') }} {{ __('common.name') }}</th>
+                                            <th>{{ __('common.items') }}</th>
+                                            <th>{{ __('common.deleted_date') }}</th>
+                                            <th>{{ __('common.days_remaining') }}</th>
+                                            <th>{{ __('common.actions') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -113,12 +113,12 @@
                                                         <div>{{ $folder->name }}</div>
                                                     </div>
                                                 </td>
-                                                <td>{{ $folder->files()->count() }} files</td>
+                                                <td>{{ $folder->files()->count() }} {{ __('common.files') }}</td>
                                                 <td>
                                                     @if($folder->trashed_at)
-                                                        {{ is_string($folder->trashed_at) ? \Carbon\Carbon::parse($folder->trashed_at)->format('M d, Y') : $folder->trashed_at->format('M d, Y') }}
+                                                        {{ is_string($folder->trashed_at) ? \Carbon\Carbon::parse($folder->trashed_at)->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') : $folder->trashed_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}
                                                     @else
-                                                        Unknown
+                                                        {{ __('common.unknown') }}
                                                     @endif
                                                 </td>
                                                 <td>
@@ -131,23 +131,23 @@
                                                         }
                                                         $colorClass = $daysRemaining <= 7 ? 'text-danger' : ($daysRemaining <= 14 ? 'text-warning' : 'text-muted');
                                                     @endphp
-                                                    <span class="{{ $colorClass }}">{{ (int)max(0, $daysRemaining) }} days</span>
+                                                    <span class="{{ $colorClass }}">{{ (int)max(0, $daysRemaining) }} {{ __('common.days') }}</span>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center list-user-action">
-                                                        <form action="{{ route('cloudbox.folders.restore', $folder->id) }}" method="POST" class="d-inline">
+                                                        <form action="{{ route('cloody.folders.restore', $folder->id) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             <button type="submit" class="action-icon bg-transparent border-0 text-success" 
-                                                                    data-toggle="tooltip" title="Restore">
+                                                                    data-toggle="tooltip" title="{{ __('common.restore') }}">
                                                                 <i class="ri-arrow-go-back-line"></i>
                                                             </button>
                                                         </form>
-                                                        <form action="{{ route('cloudbox.folders.force-delete', $folder->id) }}" method="POST" class="d-inline">
+                                                        <form action="{{ route('cloody.folders.force-delete', $folder->id) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="action-icon bg-transparent border-0 text-danger" 
-                                                                    data-toggle="tooltip" title="Delete Permanently"
-                                                                    onclick="return confirm('Permanently delete this folder and all its contents? This action cannot be undone!')">
+                                                                    data-toggle="tooltip" title="{{ __('common.delete_permanently') }}"
+                                                                    onclick="return confirm('{{ __('common.permanently_delete_folder_confirm') }}')">
                                                                 <i class="ri-delete-bin-line"></i>
                                                             </button>
                                                         </form>
@@ -164,19 +164,19 @@
 
                         <!-- Files Section -->
                         @if(request('item', 'all') !== 'folders' && $files->count() > 0)
-                            <h5 class="mb-3"><i class="ri-file-line"></i> Files</h5>
+                            <h5 class="mb-3"><i class="ri-file-line"></i> {{ __('common.files') }}</h5>
                             <!-- Bulk Actions Bar: Files in Trash -->
                             <div id="trashBulkBarFiles" class="alert alert-primary d-none mb-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span><strong><span id="trashSelectedFiles">0</span> file(s) selected</strong></span>
+                                    <span><strong><span id="trashSelectedFiles">0</span> {{ __('common.files') }}(s) {{ __('common.select') }}</strong></span>
                                     <div>
                                         <button type="button" class="btn btn-sm btn-success" id="trashRestoreFilesBtn">
-                                            <i class="ri-arrow-go-back-line"></i> Restore Selected
+                                            <i class="ri-arrow-go-back-line"></i> {{ __('common.restore_selected') }}
                                         </button>
                                         <button type="button" class="btn btn-sm btn-danger" id="trashDeleteFilesBtn">
-                                            <i class="ri-delete-bin-6-line"></i> Delete Permanently
+                                            <i class="ri-delete-bin-6-line"></i> {{ __('common.delete_permanently') }}
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-secondary" id="trashClearFilesBtn">Clear Selection</button>
+                                        <button type="button" class="btn btn-sm btn-secondary" id="trashClearFilesBtn">{{ __('common.clear_selection') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -185,12 +185,12 @@
                                     <thead class="table-color-heading">
                                         <tr>
                                             <th style="width: 40px;"><input type="checkbox" id="trashSelectAllFiles"></th>
-                                            <th>File Name</th>
-                                            <th>Type</th>
-                                            <th>Size</th>
-                                            <th>Deleted</th>
-                                            <th>Days Remaining</th>
-                                            <th>Actions</th>
+                                            <th>{{ __('common.file_name') }}</th>
+                                            <th>{{ __('common.type') }}</th>
+                                            <th>{{ __('common.size') }}</th>
+                                            <th>{{ __('common.deleted_date') }}</th>
+                                            <th>{{ __('common.days_remaining') }}</th>
+                                            <th>{{ __('common.actions') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -224,9 +224,9 @@
                                                 <td>{{ $file->formatted_size }}</td>
                                                 <td>
                                                     @if($file->trashed_at)
-                                                        {{ is_string($file->trashed_at) ? \Carbon\Carbon::parse($file->trashed_at)->format('M d, Y') : $file->trashed_at->format('M d, Y') }}
+                                                        {{ is_string($file->trashed_at) ? \Carbon\Carbon::parse($file->trashed_at)->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') : $file->trashed_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}
                                                     @else
-                                                        Unknown
+                                                        {{ __('common.unknown') }}
                                                     @endif
                                                 </td>
                                                 <td>
@@ -239,23 +239,23 @@
                                                         }
                                                         $colorClass = $daysRemaining <= 7 ? 'text-danger' : ($daysRemaining <= 14 ? 'text-warning' : 'text-muted');
                                                     @endphp
-                                                    <span class="{{ $colorClass }}">{{ (int)max(0, $daysRemaining) }} days</span>
+                                                    <span class="{{ $colorClass }}">{{ (int)max(0, $daysRemaining) }} {{ __('common.days') }}</span>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center list-user-action">
-                                                        <form action="{{ route('cloudbox.files.restore', $file->id) }}" method="POST" class="d-inline">
+                                                        <form action="{{ route('cloody.files.restore', $file->id) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             <button type="submit" class="action-icon bg-transparent border-0 text-success" 
-                                                                    data-toggle="tooltip" title="Restore">
+                                                                    data-toggle="tooltip" title="{{ __('common.restore') }}">
                                                                 <i class="ri-arrow-go-back-line"></i>
                                                             </button>
                                                         </form>
-                                                        <form action="{{ route('cloudbox.files.force-delete', $file->id) }}" method="POST" class="d-inline">
+                                                        <form action="{{ route('cloody.files.force-delete', $file->id) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="action-icon bg-transparent border-0 text-danger" 
-                                                                    data-toggle="tooltip" title="Delete Permanently"
-                                                                    onclick="return confirm('Permanently delete this file? This action cannot be undone!')">
+                                                                    data-toggle="tooltip" title="{{ __('common.delete_permanently') }}"
+                                                                    onclick="return confirm('{{ __('common.permanently_delete_file_confirm') }}')">
                                                                 <i class="ri-delete-bin-line"></i>
                                                             </button>
                                                         </form>
@@ -271,21 +271,21 @@
                     @else
                         <div class="text-center py-5">
                             <i class="ri-delete-bin-line font-size-80 text-muted"></i>
-                            <h5 class="mt-3 text-muted">Trash is empty</h5>
-                            <p class="text-muted">Deleted files and folders will appear here</p>
+                            <h5 class="mt-3 text-muted">{{ __('common.trash_is_empty') }}</h5>
+                            <p class="text-muted">{{ __('common.deleted_files_folders_will_appear') }}</p>
                         </div>
                     @endif
 
                     <!-- Cleanup confirm overlay -->
                     <div id="cleanup-confirm" class="cleanup-overlay d-none">
                         <div class="cleanup-card">
-                            <h5 class="mb-3">Delete permanently?</h5>
-                            <p class="text-muted mb-4">All items in the trash will be permanently deleted. You cannot undo this action once it is performed.</p>
+                            <h5 class="mb-3">{{ __('common.delete_permanently_confirm') }}</h5>
+                            <p class="text-muted mb-4">{{ __('common.all_items_will_be_permanently_deleted') }}</p>
                             <div class="d-flex justify-content-end align-items-center">
-                                <a href="#" class="mr-3 text-muted" id="cleanup-cancel">Cancel</a>
-                                <form action="{{ route('cloudbox.trash.cleanup') }}" method="POST">
+                                <a href="#" class="mr-3 text-muted" id="cleanup-cancel">{{ __('common.cancel') }}</a>
+                                <form action="{{ route('cloody.trash.cleanup') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="btn btn-danger">Delete permanently</button>
+                                    <button type="submit" class="btn btn-danger">{{ __('common.delete_permanently_button') }}</button>
                                 </form>
                             </div>
                         </div>
@@ -438,13 +438,13 @@
     }
     if (trashRestoreFoldersBtn) {
         trashRestoreFoldersBtn.addEventListener('click', function() {
-            submitFolderTrash('{{ route("cloudbox.trash.folders.bulk-restore") }}');
+            submitFolderTrash('{{ route("cloody.trash.folders.bulk-restore") }}');
         });
     }
     if (trashDeleteFoldersBtn) {
         trashDeleteFoldersBtn.addEventListener('click', function() {
-            if (!confirm('Permanently delete selected folder(s)? This cannot be undone.')) return;
-            submitFolderTrash('{{ route("cloudbox.trash.folders.bulk-force-delete") }}');
+            if (!confirm('{{ __('common.permanently_delete_selected_folders') }}')) return;
+            submitFolderTrash('{{ route("cloody.trash.folders.bulk-force-delete") }}');
         });
     }
 
@@ -507,13 +507,13 @@
     }
     if (trashRestoreFilesBtn) {
         trashRestoreFilesBtn.addEventListener('click', function() {
-            submitFileTrash('{{ route("cloudbox.trash.files.bulk-restore") }}');
+            submitFileTrash('{{ route("cloody.trash.files.bulk-restore") }}');
         });
     }
     if (trashDeleteFilesBtn) {
         trashDeleteFilesBtn.addEventListener('click', function() {
-            if (!confirm('Permanently delete selected file(s)? This cannot be undone.')) return;
-            submitFileTrash('{{ route("cloudbox.trash.files.bulk-force-delete") }}');
+            if (!confirm('{{ __('common.permanently_delete_selected_files') }}')) return;
+            submitFileTrash('{{ route("cloody.trash.files.bulk-force-delete") }}');
         });
     }
 </script>

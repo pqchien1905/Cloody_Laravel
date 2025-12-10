@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard - CloudBOX')
+@section('title', __('common.admin_dashboard_title') . ' - Cloody')
 
 @section('content')
 <div class="container-fluid">
@@ -8,7 +8,7 @@
         <div class="col-lg-12 mb-3">
             <div class="card-transparent card-block card-stretch card-height">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Admin Dashboard</h4>
+                    <h4 class="mb-0">{{ __('common.admin_dashboard_title') }}</h4>
                     <div class="dashboard1-dropdown d-flex align-items-center">
                         <div class="dashboard1-info">
                             <a href="#calander" class="collapsed" data-toggle="collapse" aria-expanded="false">
@@ -37,7 +37,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="mb-2 text-muted">Total Users</h6>
+                            <h6 class="mb-2 text-muted">{{ __('common.total_users') }}</h6>
                             <h3 class="mb-0">{{ $totalUsers }}</h3>
                         </div>
                         <div class="icon-small bg-primary-light rounded p-2">
@@ -52,7 +52,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="mb-2 text-muted">Total Files</h6>
+                            <h6 class="mb-2 text-muted">{{ __('common.total_files') }}</h6>
                             <h3 class="mb-0">{{ $totalFiles }}</h3>
                         </div>
                         <div class="icon-small bg-info-light rounded p-2">
@@ -67,7 +67,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="mb-2 text-muted">Total Folders</h6>
+                            <h6 class="mb-2 text-muted">{{ __('common.total_folders') }}</h6>
                             <h3 class="mb-0">{{ $totalFolders }}</h3>
                         </div>
                         <div class="icon-small bg-warning-light rounded p-2">
@@ -82,7 +82,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="mb-2 text-muted">Total Shares</h6>
+                            <h6 class="mb-2 text-muted">{{ __('common.total_shares') }}</h6>
                             <h3 class="mb-0">{{ $totalFileShares + $totalFolderShares }}</h3>
                         </div>
                         <div class="icon-small bg-success-light rounded p-2">
@@ -98,18 +98,19 @@
             <div class="card card-block card-stretch card-height">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
-                        <h4 class="card-title">Storage Usage</h4>
+                        <h4 class="card-title">{{ __('common.storage_usage') }}</h4>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="text-center">
                         <h2 class="mb-3">{{ number_format($storageUsed / 1024 / 1024 / 1024, 2) }} GB</h2>
-                        <p class="mb-4 text-muted">of 100 GB Used</p>
+                        <p class="mb-4 text-muted">{{ __('common.of_used') }} {{ $storageLimitGB ?? ($totalUsers * 1) }} GB</p>
                         <div class="iq-progress-bar mb-3">
-                            @php($percent = min(($storageUsed / 1024 / 1024 / 1024) / 100 * 100, 100))
+                            @php($storageLimit = $storageLimitGB ?? ($totalUsers * 1))
+                            @php($percent = $storageLimit > 0 ? min(($storageUsed / 1024 / 1024 / 1024) / $storageLimit * 100, 100) : 0)
                             <span class="bg-primary iq-progress progress-1 admin-storage-bar" data-percent="{{ number_format($percent, 2) }}" style="width: 0%; transition: width 1s ease;"></span>
                         </div>
-                        <p class="mb-0">~ {{ number_format(100 - ($storageUsed / 1024 / 1024 / 1024), 2) }} GB Free</p>
+                        <p class="mb-0">~ {{ number_format(max($storageLimit - ($storageUsed / 1024 / 1024 / 1024), 0), 2) }} GB {{ __('common.free') }}</p>
                     </div>
                 </div>
             </div>
@@ -120,7 +121,7 @@
             <div class="card card-block card-stretch card-height">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
-                        <h4 class="card-title">Files by Type</h4>
+                        <h4 class="card-title">{{ __('common.files_by_type') }}</h4>
                     </div>
                 </div>
                 <div class="card-body">
@@ -134,22 +135,22 @@
             <div class="card card-block card-stretch card-height">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
-                        <h4 class="card-title">Quick Links</h4>
+                        <h4 class="card-title">{{ __('common.quick_links') }}</h4>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6 mb-3">
-                            <a href="{{ route('cloudbox.user.list') }}" class="btn btn-outline-primary btn-block"><i class="las la-th-list mr-2"></i>Manage Users</a>
+                            <a href="{{ route('cloody.user.list') }}" class="btn btn-outline-primary btn-block"><i class="las la-th-list mr-2"></i>{{ __('common.manage_users') }}</a>
                         </div>
                         <div class="col-sm-6 mb-3">
-                            <a href="{{ route('cloudbox.files') }}" class="btn btn-outline-secondary btn-block"><i class="las la-file mr-2"></i>All Files</a>
+                            <a href="{{ route('cloody.files') }}" class="btn btn-outline-secondary btn-block"><i class="las la-file mr-2"></i>{{ __('common.all_files') }}</a>
                         </div>
                         <div class="col-sm-6 mb-3">
-                            <a href="{{ route('cloudbox.folders.index') }}" class="btn btn-outline-info btn-block"><i class="las la-folder mr-2"></i>All Folders</a>
+                            <a href="{{ route('cloody.folders.index') }}" class="btn btn-outline-info btn-block"><i class="las la-folder mr-2"></i>{{ __('common.all_folders') }}</a>
                         </div>
                         <div class="col-sm-6 mb-3">
-                            <a href="{{ route('cloudbox.shared') }}" class="btn btn-outline-success btn-block"><i class="las la-share-alt mr-2"></i>Shared</a>
+                            <a href="{{ route('cloody.shared') }}" class="btn btn-outline-success btn-block"><i class="las la-share-alt mr-2"></i>{{ __('common.shared') }}</a>
                         </div>
                     </div>
                 </div>
@@ -175,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.ApexCharts) {
             const options = {
                 chart: { type: 'donut', height: 260 },
-                labels: ['Images', 'Videos', 'Audio', 'PDF', 'Docs', 'Sheets', 'Others'],
+                labels: ['{{ __('common.images') }}', '{{ __('common.videos') }}', '{{ __('common.audio') }}', 'PDF', 'Docs', '{{ __('common.sheets') }}', '{{ __('common.others') }}'],
                 series: [
                     {{ $byType['images'] ?? 0 }},
                     {{ $byType['videos'] ?? 0 }},

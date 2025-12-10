@@ -4,13 +4,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="uploadFileModalLabel">
-                    <i class="ri-file-upload-line"></i> Upload Files
+                    <i class="ri-file-upload-line"></i> {{ __('common.upload_files') }}
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('cloudbox.files.upload') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+            <form action="{{ route('cloody.files.upload') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
                 @csrf
                 <input type="hidden" name="conflict_action" id="conflict_action" value="">
                 <input type="hidden" name="favorite_on_upload" id="favorite_on_upload" value="">
@@ -20,9 +20,9 @@
                         <input type="hidden" id="upload_folder_id" name="folder_id" value="{{ $currentFolderId }}">
                     @else
                     <div class="form-group">
-                        <label for="upload_folder_id">Upload to Folder (Optional)</label>
+                        <label for="upload_folder_id">{{ __('common.upload_to_folder_optional') }}</label>
                         <select class="form-control" id="upload_folder_id" name="folder_id">
-                            <option value="">Root / My Files</option>
+                            <option value="">{{ __('common.root_my_files') }}</option>
                             @if(isset($folders))
                                 @foreach($folders as $folder)
                                     <option value="{{ $folder->id }}">{{ $folder->name }}</option>
@@ -35,8 +35,8 @@
                     <!-- Drag & Drop Zone -->
                     <div class="upload-zone" id="uploadZone">
                         <i class="ri-upload-cloud-2-line font-size-64 text-primary"></i>
-                        <h5 class="mt-3">Drag & Drop files here</h5>
-                        <p class="text-muted">or click to browse</p>
+                        <h5 class="mt-3">{{ __('common.drag_drop_files_here') }}</h5>
+                        <p class="text-muted">{{ __('common.or_click_to_browse') }}</p>
                         <input type="file" 
                                class="d-none" 
                                id="fileInput" 
@@ -45,7 +45,7 @@
                                multiple
                                required>
                         <button type="button" class="btn btn-primary mt-3" id="browseBtn">
-                            <i class="ri-folder-open-line"></i> Browse Files
+                            <i class="ri-folder-open-line"></i> {{ __('common.browse_files') }}
                         </button>
                     </div>
 
@@ -58,7 +58,7 @@
                                     <h6 class="mb-2"><strong id="fileCount"></strong></h6>
                                     <ul class="mb-0" id="fileList" style="list-style: none; padding-left: 0;"></ul>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-light" onclick="clearFile()" title="Remove all">
+                                <button type="button" class="btn btn-sm btn-light" onclick="clearFile()" title="{{ __('common.remove_all') }}">
                                     <i class="ri-close-line"></i>
                                 </button>
                             </div>
@@ -73,22 +73,22 @@
                                  id="progressBar" 
                                  style="width: 0%">0%</div>
                         </div>
-                        <p class="text-center mt-2 text-muted">Uploading...</p>
+                        <p class="text-center mt-2 text-muted">{{ __('common.uploading') }}</p>
                     </div>
 
                     <!-- Upload Limits Info -->
                     <div class="alert alert-light mt-3">
                         <small class="text-muted">
                             <i class="ri-information-line"></i> 
-                            Maximum file size: <strong>100 MB</strong> | 
-                            Supported formats: All file types
+                            {{ __('common.maximum_file_size') }}: <strong>100 MB</strong> | 
+                            {{ __('common.supported_formats') }}: {{ __('common.all_file_types') }}
                         </small>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel') }}</button>
                     <button type="submit" class="btn btn-primary" id="uploadBtn" disabled>
-                        <i class="ri-upload-line"></i> Upload Files
+                        <i class="ri-upload-line"></i> {{ __('common.upload_files') }}
                     </button>
                 </div>
             </form>
@@ -102,7 +102,7 @@
         <div class="d-flex align-items-start mb-3">
             <i class="ri-alert-line font-size-32 text-warning mr-3"></i>
             <div>
-                <h5 class="mb-2">Replace or keep existing files?</h5>
+                <h5 class="mb-2">{{ __('common.replace_or_keep_existing_files') }}</h5>
                 <p class="text-muted mb-0" id="conflictMessage"></p>
             </div>
         </div>
@@ -110,22 +110,22 @@
         <div class="custom-control custom-radio mb-3 conflict-option">
             <input type="radio" id="conflict_replace" name="conflict_choice" value="replace" class="custom-control-input" checked>
             <label class="custom-control-label" for="conflict_replace">
-                <strong>Replace existing files</strong>
-                <small class="d-block text-muted">The current version will be overwritten</small>
+                <strong>{{ __('common.replace_existing_files') }}</strong>
+                <small class="d-block text-muted">{{ __('common.current_version_will_be_overwritten') }}</small>
             </label>
         </div>
         <div class="custom-control custom-radio mb-4 conflict-option">
             <input type="radio" id="conflict_keep_both" name="conflict_choice" value="keep_both" class="custom-control-input">
             <label class="custom-control-label" for="conflict_keep_both">
-                <strong>Keep both files</strong>
-                <small class="d-block text-muted">Files will be renamed (e.g., File (1).docx, File (2).docx)</small>
+                <strong>{{ __('common.keep_both_files') }}</strong>
+                <small class="d-block text-muted">{{ __('common.files_will_be_renamed') }}</small>
             </label>
         </div>
         
         <div class="d-flex justify-content-end align-items-center">
-            <a href="#" class="mr-3 text-muted" id="conflict-cancel">Cancel upload</a>
+            <a href="#" class="mr-3 text-muted" id="conflict-cancel">{{ __('common.cancel_upload') }}</a>
             <button type="button" class="btn btn-primary px-4" id="conflict-confirm">
-                <i class="ri-upload-line mr-1"></i> Continue Upload
+                <i class="ri-upload-line mr-1"></i> {{ __('common.continue_upload') }}
             </button>
         </div>
     </div>
@@ -321,11 +321,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (files.length > maxShow) {
                 const more = document.createElement('li');
                 more.className = 'text-muted mt-2';
-                more.innerHTML = `<i class="ri-more-line mr-1"></i> and ${files.length - maxShow} more file(s)`;
+                more.innerHTML = `<i class="ri-more-line mr-1"></i> {{ __('common.and_more_files', ['count' => '']) }}`.replace(':count', files.length - maxShow);
                 fileList.appendChild(more);
             }
             
-            fileCount.textContent = `${files.length} file(s) ready to upload`;
+            fileCount.textContent = `{{ __('common.file_s_ready_to_upload', ['count' => '']) }}`.replace(':count', files.length);
             filePreview.classList.remove('d-none');
             uploadBtn.disabled = false;
             
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Get current folder files list (we'll send AJAX to check)
             const folderId = document.getElementById('upload_folder_id').value;
             
-            fetch(`{{ route('cloudbox.files.check-duplicates') }}`, {
+            fetch(`{{ route('cloody.files.check-duplicates') }}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -410,9 +410,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showConflictModal(duplicates) {
-        const message = duplicates.length === 1 
-            ? `The file <strong>${duplicates[0]}</strong> already exists in this location.`
-            : `<strong>${duplicates.length} files</strong> already exist in this location:<br><ul class="mt-2 mb-0">${duplicates.slice(0, 5).map(d => `<li>${d}</li>`).join('')}${duplicates.length > 5 ? `<li class="text-muted">...and ${duplicates.length - 5} more</li>` : ''}</ul>`;
+        let message;
+        if (duplicates.length === 1) {
+            message = `{{ __('common.file_already_exists', ['name' => '']) }}`.replace(':name', `<strong>${duplicates[0]}</strong>`);
+        } else {
+            const filesList = duplicates.slice(0, 5).map(d => `<li>${d}</li>`).join('');
+            const moreText = duplicates.length > 5 ? `<li class="text-muted">...{{ __('common.and_more_files', ['count' => '']) }}</li>`.replace(':count', duplicates.length - 5) : '';
+            message = `{{ __('common.files_already_exist', ['count' => '']) }}<br><ul class="mt-2 mb-0">${filesList}${moreText}</ul>`.replace(':count', duplicates.length);
+        }
         
         document.getElementById('conflictMessage').innerHTML = message;
         document.getElementById('conflictModal').classList.remove('d-none');

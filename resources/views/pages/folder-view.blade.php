@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $folder->name . ' - CloudBOX')
+@section('title', $folder->name . ' - Cloody')
 
 @section('content')
 <div class="container-fluid">
@@ -9,9 +9,9 @@
             <!-- Breadcrumb -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-white">
-                    <li class="breadcrumb-item"><a href="{{ route('cloudbox.folders.index') }}">Folders</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('cloody.folders.index') }}">Folders</a></li>
                     @if($folder->parent)
-                        <li class="breadcrumb-item"><a href="{{ route('cloudbox.folders.show', $folder->parent->id) }}">{{ $folder->parent->name }}</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('cloody.folders.show', $folder->parent->id) }}">{{ $folder->parent->name }}</a></li>
                     @endif
                     <li class="breadcrumb-item active" aria-current="page">{{ $folder->name }}</li>
                 </ol>
@@ -88,7 +88,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($folder->children as $subfolder)
-                                        <tr class="folder-row" data-url="{{ route('cloudbox.folders.show', $subfolder->id) }}">
+                                        <tr class="folder-row" data-url="{{ route('cloody.folders.show', $subfolder->id) }}">
                                             <td onclick="event.stopPropagation();">
                                                 <input type="checkbox" class="subfolder-checkbox" value="{{ $subfolder->id }}">
                                             </td>
@@ -134,7 +134,7 @@
                                                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editSubfolderModal{{ $subfolder->id }}" onclick="event.preventDefault();">
                                                             <i class="ri-pencil-fill mr-2"></i>Edit
                                                         </a>
-                                                        <form action="{{ route('cloudbox.folders.favorite', $subfolder->id) }}" method="POST" style="display: inline; width: 100%;">
+                                                        <form action="{{ route('cloody.folders.favorite', $subfolder->id) }}" method="POST" style="display: inline; width: 100%;">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item">
                                                                 <i class="ri-star-{{ $subfolder->is_favorite ? 'fill' : 'line' }} mr-2 text-warning"></i>
@@ -148,7 +148,7 @@
                                                             <i class="ri-file-download-fill mr-2"></i>Download
                                                         </a>
                                                         <div class="dropdown-divider"></div>
-                                                        <form action="{{ route('cloudbox.folders.destroy', $subfolder->id) }}" method="POST" style="display: inline; width: 100%;" class="js-delete-form">
+                                                        <form action="{{ route('cloody.folders.destroy', $subfolder->id) }}" method="POST" style="display: inline; width: 100%;" class="js-delete-form">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="dropdown-item text-danger js-delete-btn">
@@ -170,7 +170,7 @@
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
-                                                    <form action="{{ route('cloudbox.folders.update', $subfolder->id) }}" method="POST">
+                                                    <form action="{{ route('cloody.folders.update', $subfolder->id) }}" method="POST">
                                                         @csrf
                                                         @method('PUT')
                                                         <div class="modal-body">
@@ -285,7 +285,7 @@
                                                     @endphp
                                                     <i class="{{ $iconClass }} font-size-20 {{ $iconColor }} mr-2"></i>
                                                     <div>
-                                                        <a href="{{ route('cloudbox.files.view', $file->id) }}" class="font-weight-500">
+                                                        <a href="{{ route('cloody.files.view', $file->id) }}" class="font-weight-500">
                                                             {{ $file->original_name }}
                                                         </a>
                                                         @if($file->is_favorite)
@@ -303,13 +303,13 @@
                                                         <i class="ri-more-2-fill font-size-20"></i>
                                                     </span>
                                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownFile{{ $file->id }}">
-                                                        <a class="dropdown-item" href="{{ route('cloudbox.files.view', $file->id) }}">
+                                                        <a class="dropdown-item" href="{{ route('cloody.files.view', $file->id) }}">
                                                             <i class="ri-eye-line mr-2"></i>View
                                                         </a>
                                                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editFileModal{{ $file->id }}" onclick="event.preventDefault();">
                                                             <i class="ri-pencil-fill mr-2"></i>Edit
                                                         </a>
-                                                        <form action="{{ route('cloudbox.files.favorite', $file->id) }}" method="POST" style="display: inline; width: 100%;">
+                                                        <form action="{{ route('cloody.files.favorite', $file->id) }}" method="POST" style="display: inline; width: 100%;">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item">
                                                                 <i class="ri-star-{{ $file->is_favorite ? 'fill' : 'line' }} mr-2 text-warning"></i>
@@ -319,11 +319,11 @@
                                                         <a class="dropdown-item" href="#" onclick="event.preventDefault();">
                                                             <i class="ri-share-line mr-2"></i>Share
                                                         </a>
-                                                        <a class="dropdown-item" href="{{ route('cloudbox.files.download', $file->id) }}">
+                                                        <a class="dropdown-item" href="{{ route('cloody.files.download', $file->id) }}">
                                                             <i class="ri-file-download-fill mr-2"></i>Download
                                                         </a>
                                                         <div class="dropdown-divider"></div>
-                                                        <form action="{{ route('cloudbox.files.delete', $file->id) }}" method="POST" style="display: inline; width: 100%;" class="js-delete-form">
+                                                        <form action="{{ route('cloody.files.delete', $file->id) }}" method="POST" style="display: inline; width: 100%;" class="js-delete-form">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="dropdown-item text-danger js-delete-btn">
@@ -345,7 +345,7 @@
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
-                                                    <form action="{{ route('cloudbox.files.update', $file->id) }}" method="POST">
+                                                    <form action="{{ route('cloody.files.update', $file->id) }}" method="POST">
                                                         @csrf
                                                         @method('PUT')
                                                         <div class="modal-body">
@@ -393,7 +393,7 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <form action="{{ route('cloudbox.folders.store') }}" method="POST">
+            <form action="{{ route('cloody.folders.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="parent_id" value="{{ $folder->id }}">
                 <div class="modal-body">
@@ -671,7 +671,7 @@
             // Tạo và gửi form
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ route("cloudbox.files.bulk-delete") }}';
+            form.action = '{{ route("cloody.files.bulk-delete") }}';
             
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';
@@ -762,7 +762,7 @@
             // Create and submit form
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ route("cloudbox.folders.bulk-delete") }}';
+            form.action = '{{ route("cloody.folders.bulk-delete") }}';
             
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';

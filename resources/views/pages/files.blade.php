@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Files - CloudBOX')
+@section('title', __('common.files') . ' - Cloody')
 
 @section('content')
 <div class="container-fluid">
@@ -15,7 +15,7 @@
                         </div>
                         <div class="ml-3">
                             <h5 class="mb-0">{{ $stats['total'] }}</h5>
-                            <p class="mb-0 text-muted">Total Files</p>
+                            <p class="mb-0 text-muted">{{ __('common.total_files') }}</p>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="ml-3">
                             <h5 class="mb-0">{{ $stats['folders'] }}</h5>
-                            <p class="mb-0 text-muted">Folders</p>
+                            <p class="mb-0 text-muted">{{ __('common.folders') }}</p>
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                         </div>
                         <div class="ml-3">
                             <h5 class="mb-0">{{ $stats['favorites'] }}</h5>
-                            <p class="mb-0 text-muted">Favorites</p>
+                            <p class="mb-0 text-muted">{{ __('common.favorites') }}</p>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                         </div>
                         <div class="ml-3">
                             <h5 class="mb-0">{{ number_format($stats['size'] / 1048576, 2) }} MB</h5>
-                            <p class="mb-0 text-muted">Storage Used</p>
+                            <p class="mb-0 text-muted">{{ __('common.storage_used') }}</p>
                         </div>
                     </div>
                 </div>
@@ -73,11 +73,11 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
-                        <h4 class="card-title">All Files</h4>
+                        <h4 class="card-title">{{ __('common.all_files') }}</h4>
                     </div>
                     <div class="card-header-toolbar d-flex align-items-center">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadFileModal">
-                            <i class="ri-upload-line"></i> Upload File
+                            <i class="ri-upload-line"></i> {{ __('common.upload_file') }}
                         </button>
                     </div>
                 </div>
@@ -85,9 +85,9 @@
                     <!-- Filters -->
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <form method="GET" action="{{ route('cloudbox.files') }}">
+                            <form method="GET" action="{{ route('cloody.files') }}">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="search" placeholder="Search files..." value="{{ request('search') }}">
+                                    <input type="text" class="form-control" name="search" placeholder="{{ __('common.search_files') }}" value="{{ request('search') }}">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="ri-search-line"></i>
@@ -98,7 +98,7 @@
                         </div>
                         <div class="col-md-3">
                             <select class="form-control" onchange="window.location.href='?category='+this.value+(this.value?'':'')">
-                                <option value="">All Types</option>
+                                <option value="">{{ __('common.all_types') }}</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'selected' : '' }}>
                                         {{ $category->name }}
@@ -108,7 +108,7 @@
                         </div>
                         <div class="col-md-3">
                             <select class="form-control" onchange="window.location.href='?folder_id='+this.value">
-                                <option value="">All Folders</option>
+                                <option value="">{{ __('common.all_folders') }}</option>
                                 @foreach($folders as $folder)
                                     <option value="{{ $folder->id }}" {{ request('folder_id') == $folder->id ? 'selected' : '' }}>
                                         {{ $folder->name }}
@@ -118,9 +118,9 @@
                         </div>
                         <div class="col-md-2">
                             <select class="form-control" onchange="window.location.href='?sort='+this.value">
-                                <option value="created_at" {{ request('sort') == 'created_at' ? 'selected' : '' }}>Newest</option>
-                                <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Name</option>
-                                <option value="size" {{ request('sort') == 'size' ? 'selected' : '' }}>Size</option>
+                                <option value="created_at" {{ request('sort') == 'created_at' ? 'selected' : '' }}>{{ __('common.newest') }}</option>
+                                <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>{{ __('common.name') }}</option>
+                                <option value="size" {{ request('sort') == 'size' ? 'selected' : '' }}>{{ __('common.size') }}</option>
                             </select>
                         </div>
                     </div>
@@ -136,12 +136,12 @@
                         <!-- Bulk Actions Bar -->
                         <div id="bulkActionsBar" class="alert alert-primary d-none mb-3">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span><strong><span id="selectedCount">0</span> file(s) selected</strong></span>
+                                <span><strong><span id="selectedCount">0</span> {{ __('common.files_selected') }}</strong></span>
                                 <div>
                                     <button type="button" class="btn btn-sm btn-danger" id="bulkDeleteBtn">
-                                        <i class="ri-delete-bin-line"></i> Delete Selected
+                                        <i class="ri-delete-bin-line"></i> {{ __('common.delete_selected') }}
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-secondary" id="clearSelectionBtn">Clear Selection</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" id="clearSelectionBtn">{{ __('common.clear_selection') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -153,12 +153,12 @@
                                         <th scope="col" style="width: 40px;">
                                             <input type="checkbox" id="selectAllFiles">
                                         </th>
-                                        <th scope="col">File Name</th>
-                                        <th scope="col">Folder</th>
-                                        <th scope="col">Type</th>
-                                        <th scope="col">Size</th>
-                                        <th scope="col">Modified</th>
-                                        <th scope="col">Actions</th>
+                                        <th scope="col">{{ __('common.file_name') }}</th>
+                                        <th scope="col">{{ __('common.folder') }}</th>
+                                        <th scope="col">{{ __('common.type') }}</th>
+                                        <th scope="col">{{ __('common.size') }}</th>
+                                        <th scope="col">{{ __('common.last_modified') }}</th>
+                                        <th scope="col">{{ __('common.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -191,7 +191,7 @@
                                                     @endphp
                                                     <i class="{{ $iconClass }} font-size-20 {{ $iconColor }}"></i>
                                                     <div class="ml-3">
-                                                        <a href="{{ route('cloudbox.files.view', $file->id) }}" class="font-weight-500">
+                                                        <a href="{{ route('cloody.files.view', $file->id) }}" class="font-weight-500">
                                                             {{ $file->original_name }}
                                                         </a>
                                                         @if($file->is_favorite)
@@ -202,7 +202,7 @@
                                             </td>
                                             <td>
                                                 @if($file->folder)
-                                                    <a href="{{ route('cloudbox.folders.show', $file->folder->id) }}">
+                                                    <a href="{{ route('cloody.folders.show', $file->folder->id) }}">
                                                         {{ $file->folder->name }}
                                                     </a>
                                                 @else
@@ -219,27 +219,27 @@
                                                     </span>
                                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownFile{{ $file->id }}">
                                                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editFileModal{{ $file->id }}" onclick="event.preventDefault();">
-                                                            <i class="ri-pencil-fill mr-2"></i>Edit
+                                                            <i class="ri-pencil-fill mr-2"></i>{{ __('common.edit') }}
                                                         </a>
-                                                        <form action="{{ route('cloudbox.files.favorite', $file->id) }}" method="POST" style="display: inline; width: 100%;">
+                                                        <form action="{{ route('cloody.files.favorite', $file->id) }}" method="POST" style="display: inline; width: 100%;">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item">
                                                                 <i class="ri-star-{{ $file->is_favorite ? 'fill' : 'line' }} mr-2 text-warning"></i>
-                                                                {{ $file->is_favorite ? 'Remove from Favorites' : 'Add to Favorites' }}
+                                                                {{ $file->is_favorite ? __('common.remove_from_favorites') : __('common.add_to_favorites') }}
                                                             </button>
                                                         </form>
                                                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#shareFileModal{{ $file->id }}" onclick="event.preventDefault();">
-                                                            <i class="ri-share-line mr-2"></i>Share
+                                                            <i class="ri-share-line mr-2"></i>{{ __('common.share') }}
                                                         </a>
-                                                        <a class="dropdown-item" href="{{ route('cloudbox.files.download', $file->id) }}">
-                                                            <i class="ri-file-download-fill mr-2"></i>Download
+                                                        <a class="dropdown-item" href="{{ route('cloody.files.download', $file->id) }}">
+                                                            <i class="ri-file-download-fill mr-2"></i>{{ __('common.download') }}
                                                         </a>
                                                         <div class="dropdown-divider"></div>
-                                                        <form action="{{ route('cloudbox.files.delete', $file->id) }}" method="POST" style="display: inline; width: 100%;">
+                                                        <form action="{{ route('cloody.files.delete', $file->id) }}" method="POST" style="display: inline; width: 100%;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="dropdown-item text-danger">
-                                                                <i class="ri-delete-bin-6-fill mr-2"></i>Delete
+                                                                <i class="ri-delete-bin-6-fill mr-2"></i>{{ __('common.delete') }}
                                                             </button>
                                                         </form>
                                                     </div>
@@ -252,25 +252,25 @@
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Rename File</h5>
+                                                        <h5 class="modal-title">{{ __('common.rename_file') }}</h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
-                                                    <form action="{{ route('cloudbox.files.update', $file->id) }}" method="POST">
+                                                    <form action="{{ route('cloody.files.update', $file->id) }}" method="POST">
                                                         @csrf
                                                         @method('PUT')
                                                         <div class="modal-body">
                                                             <div class="form-group">
-                                                                <label for="file_name{{ $file->id }}">File Name <span class="text-danger">*</span></label>
+                                                                <label for="file_name{{ $file->id }}">{{ __('common.file_name') }} <span class="text-danger">*</span></label>
                                                                 <input type="text" class="form-control" id="file_name{{ $file->id }}" 
                                                                        name="name" value="{{ pathinfo($file->original_name, PATHINFO_FILENAME) }}" required>
-                                                                <small class="form-text text-muted">Extension: .{{ $file->extension }}</small>
+                                                                <small class="form-text text-muted">{{ __('common.extension') }}: .{{ $file->extension }}</small>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                            <button type="submit" class="btn btn-primary">Rename</button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel') }}</button>
+                                                            <button type="submit" class="btn btn-primary">{{ __('common.rename') }}</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -282,22 +282,22 @@
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Share File</h5>
+                                                        <h5 class="modal-title">{{ __('common.share_file') }}</h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
-                                                    <form action="{{ route('cloudbox.files.share', $file->id) }}" method="POST">
+                                                    <form action="{{ route('cloody.files.share', $file->id) }}" method="POST">
                                                         @csrf
                                                         <div class="modal-body">
                                                             <div class="form-group">
-                                                                <label for="share_email{{ $file->id }}">Recipient Email <span class="text-danger">*</span></label>
-                                                                <input type="email" class="form-control" id="share_email{{ $file->id }}" name="email" required placeholder="Enter recipient's email">
+                                                                <label for="share_email{{ $file->id }}">{{ __('common.recipient_email') }} <span class="text-danger">*</span></label>
+                                                                <input type="email" class="form-control" id="share_email{{ $file->id }}" name="email" required placeholder="{{ __('common.enter_recipient_email') }}">
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                            <button type="submit" class="btn btn-primary">Share</button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('common.cancel') }}</button>
+                                                            <button type="submit" class="btn btn-primary">{{ __('common.share') }}</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -315,10 +315,10 @@
                     @else
                         <div class="text-center py-5">
                             <i class="ri-file-list-3-line font-size-80 text-muted"></i>
-                            <h5 class="mt-3 text-muted">No files found</h5>
-                            <p class="text-muted">Upload your first file to get started</p>
+                            <h5 class="mt-3 text-muted">{{ __('common.no_files_found') }}</h5>
+                            <p class="text-muted">{{ __('common.upload_first_file') }}</p>
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadFileModal">
-                                <i class="ri-upload-line"></i> Upload File
+                                <i class="ri-upload-line"></i> {{ __('common.upload_file') }}
                             </button>
                         </div>
                     @endif
@@ -428,12 +428,13 @@
             if (checked.length === 0) return;
 
             const count = checked.length;
-            if (!confirm(`Move ${count} file(s) to trash?`)) return;
+            const confirmMessage = '{{ __('common.move_to_trash_confirm', ['count' => ':count']) }}'.replace(':count', count);
+            if (!confirm(confirmMessage)) return;
 
             // Tạo form và gửi
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{{ route("cloudbox.files.bulk-delete") }}';
+            form.action = '{{ route("cloody.files.bulk-delete") }}';
             
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';

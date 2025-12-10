@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\Payment;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -30,12 +31,31 @@ class AuthenticatedSessionController extends Controller
 
         // Lưu email vào cookie nếu 'remember me' được chọn
         if ($request->filled('remember')) {
-            cookie()->queue('cloudbox_email', $request->email, 43200); // 30 ngày
+            cookie()->queue('cloody_email', $request->email, 43200); // 30 ngày
         } else {
-            cookie()->queue(cookie()->forget('cloudbox_email'));
+            cookie()->queue(cookie()->forget('cloody_email'));
         }
 
-        return redirect()->intended(route('cloudbox.dashboard', absolute: false));
+        // Kiểm tra payment_success hoặc payment_callback_id trong session/URL
+        $paymentId = $request->input('payment_success') 
+            ?? $request->input('payment_failed')
+            ?? $request->session()->pull('payment_callback_id');
+            
+        if ($paymentId) {
+            // Kiểm tra payment có thuộc về user này không
+            $payment = Payment::find($paymentId);
+            if ($payment && $payment->user_id === Auth::id()) {
+                if ($payment->payment_status === 'completed') {
+                    return redirect()->route('cloody.storage.plans')
+                        ->with('success', 'Thanh toán thành công! Gói của bạn đã được nâng cấp.');
+                } else {
+                    return redirect()->route('cloody.storage.plans')
+                        ->with('error', 'Thanh toán thất bại. Vui lòng thử lại.');
+                }
+            }
+        }
+
+        return redirect()->intended(route('cloody.dashboard', absolute: false));
     }
 
     /**

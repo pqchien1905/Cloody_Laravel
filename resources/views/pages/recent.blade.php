@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Recent Files')
+@section('title', __('common.recent_files') . ' - Cloody')
 
 @section('content')
 <div class="container-fluid">
@@ -10,18 +10,18 @@
             <div class="card card-block card-stretch card-transparent">
                 <div class="card-header d-flex justify-content-between pb-0">
                     <div class="header-title">
-                        <h4 class="card-title">Documents</h4>
+                        <h4 class="card-title">{{ __('common.documents') }}</h4>
                     </div>
                     <div class="card-header-toolbar d-flex align-items-center">
                         <div class="card-header-toolbar">
                             <div class="dropdown">
                                 <span class="dropdown-toggle dropdown-bg btn bg-white" id="dropdownMenuButton001" data-toggle="dropdown">
-                                    Name<i class="ri-arrow-down-s-line ml-1"></i>
+                                    {{ __('common.name') }}<i class="ri-arrow-down-s-line ml-1"></i>
                                 </span>
                                 <div class="dropdown-menu dropdown-menu-right shadow-none" aria-labelledby="dropdownMenuButton001">
-                                    <a class="dropdown-item" href="#">Last modified</a>
-                                    <a class="dropdown-item" href="#">Last modified by me</a>
-                                    <a class="dropdown-item" href="#">Last opened by me</a>
+                                    <a class="dropdown-item" href="#">{{ __('common.last_modified') }}</a>
+                                    <a class="dropdown-item" href="#">{{ __('common.last_modified_by_me') }}</a>
+                                    <a class="dropdown-item" href="#">{{ __('common.last_opened_by_me') }}</a>
                                 </div>
                             </div>
                         </div>
@@ -39,7 +39,7 @@
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="card card-block card-stretch card-height">
                 <div class="card-body image-thumb">
-                    <a href="{{ route('cloudbox.files.view', $file->id) }}">
+                    <a href="{{ route('cloody.files.view', $file->id) }}">
                         <div class="mb-4 text-center p-3 rounded iq-thumb">
                             <div class="iq-image-overlay"></div>
                             @php
@@ -58,7 +58,7 @@
                                     } elseif (in_array($file->extension, ['ppt', 'pptx'])) {
                                         $thumbnail = 'layouts/page-1/ppt.png';
                                     } elseif (in_array($file->extension, ['mp4', 'avi', 'mov', 'wmv'])) {
-                                        $thumbnail = 'layouts/page-1/video.png';
+                                        $thumbnail = 'layouts/page-1/video-icon.svg';
                                     } elseif (in_array($file->extension, ['mp3', 'wav', 'ogg'])) {
                                         $thumbnail = 'layouts/page-1/mp3.png';
                                     }
@@ -84,17 +84,17 @@
             <div class="card card-block card-stretch card-transparent">
                 <div class="card-header d-flex justify-content-between pb-0">
                     <div class="header-title">
-                        <h4 class="card-title">Folders</h4>
+                        <h4 class="card-title">{{ __('common.folders') }}</h4>
                     </div>
                     <div class="card-header-toolbar">
                         <div class="dropdown">
                             <span class="dropdown-toggle dropdown-bg btn bg-white" id="dropdownMenuButton1" data-toggle="dropdown">
-                                Name<i class="ri-arrow-down-s-line ml-1"></i>
+                                {{ __('common.name') }}<i class="ri-arrow-down-s-line ml-1"></i>
                             </span>
                             <div class="dropdown-menu dropdown-menu-right shadow-none" aria-labelledby="dropdownMenuButton1">
-                                <a class="dropdown-item" href="#">Last modified</a>
-                                <a class="dropdown-item" href="#">Last modified by me</a>
-                                <a class="dropdown-item" href="#">Last opened by me</a>
+                                <a class="dropdown-item" href="#">{{ __('common.last_modified') }}</a>
+                                <a class="dropdown-item" href="#">{{ __('common.last_modified_by_me') }}</a>
+                                <a class="dropdown-item" href="#">{{ __('common.last_opened_by_me') }}</a>
                             </div>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
             <div class="card card-block card-stretch card-height">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('cloudbox.folders.show', $folder->id) }}" class="folder">
+                        <a href="{{ route('cloody.folders.show', $folder->id) }}" class="folder">
                             <div class="icon-small bg-{{ $folderColors[$colorIndex % 4] }} rounded mb-4">
                                 <i class="ri-file-copy-line"></i>
                             </div>
@@ -124,39 +124,39 @@
                                     <i class="ri-more-2-fill"></i>
                                 </span>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton{{ $folder->id }}">
-                                    <a class="dropdown-item" href="{{ route('cloudbox.folders.show', $folder->id) }}">
-                                        <i class="ri-eye-fill mr-2"></i>View
+                                    <a class="dropdown-item" href="{{ route('cloody.folders.show', $folder->id) }}">
+                                        <i class="ri-eye-fill mr-2"></i>{{ __('common.view') }}
                                     </a>
-                                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); if(confirm('Move to trash?')) document.getElementById('delete-folder-form-{{ $folder->id }}').submit();">
-                                        <i class="ri-delete-bin-6-fill mr-2"></i>Delete
+                                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); if(confirm('{{ __('common.move_to_trash') }}')) document.getElementById('delete-folder-form-{{ $folder->id }}').submit();">
+                                        <i class="ri-delete-bin-6-fill mr-2"></i>{{ __('common.delete') }}
                                     </a>
-                                    <a class="dropdown-item" href="{{ route('cloudbox.folders.edit', $folder->id) }}">
-                                        <i class="ri-pencil-fill mr-2"></i>Edit
-                                    </a>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="ri-printer-fill mr-2"></i>Print
+                                    <a class="dropdown-item" href="{{ route('cloody.folders.edit', $folder->id) }}">
+                                        <i class="ri-pencil-fill mr-2"></i>{{ __('common.edit') }}
                                     </a>
                                     <a class="dropdown-item" href="#">
-                                        <i class="ri-file-download-fill mr-2"></i>Download
+                                        <i class="ri-printer-fill mr-2"></i>{{ __('common.print') }}
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="ri-file-download-fill mr-2"></i>{{ __('common.download') }}
                                     </a>
                                 </div>
                             </div>
                             
-                            <form id="delete-folder-form-{{ $folder->id }}" action="{{ route('cloudbox.folders.destroy', $folder->id) }}" method="POST" style="display: none;">
+                            <form id="delete-folder-form-{{ $folder->id }}" action="{{ route('cloody.folders.destroy', $folder->id) }}" method="POST" style="display: none;">
                                 @csrf
                                 @method('DELETE')
                             </form>
                         </div>
                     </div>
-                    <a href="{{ route('cloudbox.folders.show', $folder->id) }}" class="folder">
+                    <a href="{{ route('cloody.folders.show', $folder->id) }}" class="folder">
                         <h5 class="mb-2">{{ $folder->name }}</h5>
                         <p class="mb-2">
                             <i class="lar la-clock text-{{ $folderColors[$colorIndex % 4] }} mr-2 font-size-20"></i> 
-                            {{ $folder->created_at->format('d M, Y') }}
+                            {{ $folder->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y') }}
                         </p>
                         <p class="mb-0">
                             <i class="las la-file-alt text-{{ $folderColors[$colorIndex % 4] }} mr-2 font-size-20"></i> 
-                            {{ $folder->files_count }} Files
+                            {{ $folder->files_count }} {{ __('common.files') }}
                         </p>
                     </a>
                 </div>
@@ -170,7 +170,7 @@
             <div class="card card-block card-stretch card-transparent">
                 <div class="card-header d-flex justify-content-between pb-0">
                     <div class="header-title">
-                        <h4 class="card-title">Files</h4>
+                        <h4 class="card-title">{{ __('common.files') }}</h4>
                     </div>
                 </div>
             </div>
@@ -184,10 +184,10 @@
                         <table class="table mb-0 table-borderless tbl-server-info">
                             <thead>
                                 <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Owner</th>
-                                    <th scope="col">Last Edit</th>
-                                    <th scope="col">File Size</th>
+                                    <th scope="col">{{ __('common.name') }}</th>
+                                    <th scope="col">{{ __('common.owner') }}</th>
+                                    <th scope="col">{{ __('common.last_edit') }}</th>
+                                    <th scope="col">{{ __('common.file_size') }}</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -225,14 +225,14 @@
                                                 <i class="{{ $iconClass }}"></i>
                                             </div>
                                             <div>
-                                                <a href="{{ route('cloudbox.files.view', $file->id) }}" style="cursor: pointer;">
+                                                <a href="{{ route('cloody.files.view', $file->id) }}" style="cursor: pointer;">
                                                     {{ $file->original_name }}
                                                 </a>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $file->user->name ?? 'Me' }}</td>
-                                    <td>{{ $file->created_at->format('M d, Y') }}</td>
+                                    <td>{{ $file->user->name ?? __('common.you') }}</td>
+                                    <td>{{ $file->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y') }}</td>
                                     <td>{{ number_format($file->size / 1024 / 1024, 2) }} MB</td>
                                     <td>
                                         <div class="dropdown">
@@ -240,25 +240,25 @@
                                                 <i class="ri-more-fill"></i>
                                             </span>
                                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton{{ $file->id }}">
-                                                <a class="dropdown-item" href="{{ route('cloudbox.files.view', $file->id) }}">
-                                                    <i class="ri-eye-fill mr-2"></i>View
+                                                <a class="dropdown-item" href="{{ route('cloody.files.view', $file->id) }}">
+                                                    <i class="ri-eye-fill mr-2"></i>{{ __('common.view') }}
                                                 </a>
-                                                <a class="dropdown-item" href="#" onclick="event.preventDefault(); if(confirm('Move to trash?')) document.getElementById('delete-form-{{ $file->id }}').submit();">
-                                                    <i class="ri-delete-bin-6-fill mr-2"></i>Delete
-                                                </a>
-                                                <a class="dropdown-item" href="#">
-                                                    <i class="ri-pencil-fill mr-2"></i>Edit
+                                                <a class="dropdown-item" href="#" onclick="event.preventDefault(); if(confirm('{{ __('common.move_to_trash') }}')) document.getElementById('delete-form-{{ $file->id }}').submit();">
+                                                    <i class="ri-delete-bin-6-fill mr-2"></i>{{ __('common.delete') }}
                                                 </a>
                                                 <a class="dropdown-item" href="#">
-                                                    <i class="ri-printer-fill mr-2"></i>Print
+                                                    <i class="ri-pencil-fill mr-2"></i>{{ __('common.edit') }}
                                                 </a>
-                                                <a class="dropdown-item" href="{{ route('cloudbox.files.download', $file->id) }}">
-                                                    <i class="ri-file-download-fill mr-2"></i>Download
+                                                <a class="dropdown-item" href="#">
+                                                    <i class="ri-printer-fill mr-2"></i>{{ __('common.print') }}
+                                                </a>
+                                                <a class="dropdown-item" href="{{ route('cloody.files.download', $file->id) }}">
+                                                    <i class="ri-file-download-fill mr-2"></i>{{ __('common.download') }}
                                                 </a>
                                             </div>
                                         </div>
                                         
-                                        <form id="delete-form-{{ $file->id }}" action="{{ route('cloudbox.files.delete', $file->id) }}" method="POST" style="display: none;">
+                                        <form id="delete-form-{{ $file->id }}" action="{{ route('cloody.files.delete', $file->id) }}" method="POST" style="display: none;">
                                             @csrf
                                             @method('DELETE')
                                         </form>

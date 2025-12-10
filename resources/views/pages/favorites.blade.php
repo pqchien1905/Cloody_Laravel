@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Favorites - CloudBOX')
+@section('title', __('common.favorites') . ' - Cloody')
 
 @section('content')
 <div class="container-fluid">
@@ -10,7 +10,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="header-title">
                         <h4 class="card-title">
-                            <i class="ri-star-fill text-warning"></i> Favorites
+                            <i class="ri-star-fill text-warning"></i> {{ __('common.favorites') }}
                         </h4>
                     </div>
                     
@@ -25,14 +25,14 @@
 
                     <!-- Favorite Folders Section -->
                     @if(isset($favoriteFolders) && $favoriteFolders->count() > 0)
-                        <h5 class="mb-3"><i class="ri-folder-star-line"></i> Favorite Folders ({{ $favoriteFolders->count() }})</h5>
+                        <h5 class="mb-3"><i class="ri-folder-star-line"></i> {{ __('common.favorite_folders') }} ({{ $favoriteFolders->count() }})</h5>
                         <div class="row mb-4">
                             @foreach($favoriteFolders as $folder)
                             <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                                 <div class="card card-block card-stretch card-height">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between">
-                                            <a href="{{ route('cloudbox.folders.show', $folder->id) }}" class="folder">
+                                            <a href="{{ route('cloody.folders.show', $folder->id) }}" class="folder">
                                                 <div class="icon-small rounded mb-3" style="background-color: {{ $folder->color ?? '#3498db' }}20;">
                                                     <i class="ri-folder-3-fill" style="color: {{ $folder->color ?? '#3498db' }}; font-size: 24px;"></i>
                                                 </div>
@@ -43,34 +43,34 @@
                                                         <i class="ri-more-2-fill"></i>
                                                     </span>
                                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownFolder{{ $folder->id }}">
-                                                        <a class="dropdown-item" href="{{ route('cloudbox.folders.show', $folder->id) }}">
-                                                            <i class="ri-eye-fill mr-2"></i>View
+                                                        <a class="dropdown-item" href="{{ route('cloody.folders.show', $folder->id) }}">
+                                                            <i class="ri-eye-fill mr-2"></i>{{ __('common.view') }}
                                                         </a>
-                                                        <form action="{{ route('cloudbox.folders.favorite', $folder->id) }}" method="POST" style="display: inline; width: 100%;">
+                                                        <form action="{{ route('cloody.folders.favorite', $folder->id) }}" method="POST" style="display: inline; width: 100%;">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item">
-                                                                <i class="ri-star-fill mr-2 text-warning"></i>Remove from Favorites
+                                                                <i class="ri-star-fill mr-2 text-warning"></i>{{ __('common.remove_from_favorites') }}
                                                             </button>
                                                         </form>
                                                         <div class="dropdown-divider"></div>
-                                                        <form action="{{ route('cloudbox.folders.destroy', $folder->id) }}" method="POST" style="display: inline; width: 100%;">
+                                                        <form action="{{ route('cloody.folders.destroy', $folder->id) }}" method="POST" style="display: inline; width: 100%;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="dropdown-item text-danger">
-                                                                <i class="ri-delete-bin-6-fill mr-2"></i>Delete
+                                                                <i class="ri-delete-bin-6-fill mr-2"></i>{{ __('common.delete') }}
                                                             </button>
                                                         </form>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href="{{ route('cloudbox.folders.show', $folder->id) }}" class="folder">
+                                        <a href="{{ route('cloody.folders.show', $folder->id) }}" class="folder">
                                             <h6 class="mb-2">
                                                 {{ $folder->name }}
                                                 <i class="ri-star-fill text-warning ml-1"></i>
                                             </h6>
                                             <p class="mb-2 text-muted small">
-                                                <i class="ri-file-line mr-1"></i> {{ $folder->files_count ?? 0 }} Files
+                                                <i class="ri-file-line mr-1"></i> {{ $folder->files_count ?? 0 }} {{ __('common.files') }}
                                             </p>
                                             <p class="mb-0 text-muted small">
                                                 <i class="ri-time-line mr-1"></i> {{ $folder->created_at->diffForHumans() }}
@@ -85,25 +85,25 @@
                     @endif
 
                     <!-- Favorite Files Section -->
-                    <h5 class="mb-3"><i class="ri-file-star-line"></i> Favorite Files ({{ $files->count() }})</h5>
+                    <h5 class="mb-3"><i class="ri-file-star-line"></i> {{ __('common.favorite_files') }} ({{ $files->count() }})</h5>
                     @if($files->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead class="table-color-heading">
                                     <tr>
-                                        <th>File Name</th>
-                                        <th>Folder</th>
-                                        <th>Type</th>
-                                        <th>Size</th>
-                                        <th>Added</th>
-                                        <th class="text-center actions-col">Actions</th>
+                                        <th>{{ __('common.file_name') }}</th>
+                                        <th>{{ __('common.folder') }}</th>
+                                        <th>{{ __('common.type') }}</th>
+                                        <th>{{ __('common.size') }}</th>
+                                        <th>{{ __('common.added') }}</th>
+                                        <th class="text-center actions-col">{{ __('common.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($files as $file)
                                         <tr>
                                             <td>
-                                                <a href="{{ route('cloudbox.files.view', $file->id) }}" class="d-flex align-items-center text-body" style="text-decoration: none;">
+                                                <a href="{{ route('cloody.files.view', $file->id) }}" class="d-flex align-items-center text-body" style="text-decoration: none;">
                                                     @php
                                                         $iconClass = 'ri-file-line';
                                                         $iconColor = 'text-muted';
@@ -130,9 +130,9 @@
                                             </td>
                                             <td>
                                                 @if($file->folder)
-                                                    <a href="{{ route('cloudbox.folders.show', $file->folder->id) }}">{{ $file->folder->name }}</a>
+                                                    <a href="{{ route('cloody.folders.show', $file->folder->id) }}">{{ $file->folder->name }}</a>
                                                 @else
-                                                    <span class="text-muted">Root</span>
+                                                    <span class="text-muted">{{ __('common.root') }}</span>
                                                 @endif
                                             </td>
                                             <td>{{ strtoupper($file->extension) }}</td>
@@ -140,22 +140,22 @@
                                             <td>{{ $file->created_at->diffForHumans() }}</td>
                                             <td class="text-center actions-col">
                                                 <div class="d-flex align-items-center list-user-action">
-                                                    <a class="action-icon text-primary" href="{{ route('cloudbox.files.download', $file->id) }}" 
-                                                       data-toggle="tooltip" title="Download">
+                                                    <a class="action-icon text-primary" href="{{ route('cloody.files.download', $file->id) }}" 
+                                                       data-toggle="tooltip" title="{{ __('common.download') }}">
                                                         <i class="ri-download-line"></i>
                                                     </a>
-                                                    <form action="{{ route('cloudbox.files.favorite', $file->id) }}" method="POST" class="d-inline">
+                                                    <form action="{{ route('cloody.files.favorite', $file->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="action-icon bg-transparent border-0 text-warning" 
-                                                                data-toggle="tooltip" title="Remove from favorites">
+                                                                data-toggle="tooltip" title="{{ __('common.remove_from_favorites') }}">
                                                             <i class="ri-star-fill"></i>
                                                         </button>
                                                     </form>
-                                                    <form action="{{ route('cloudbox.files.delete', $file->id) }}" method="POST" class="d-inline">
+                                                    <form action="{{ route('cloody.files.delete', $file->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="action-icon bg-transparent border-0 text-danger" 
-                                                                data-toggle="tooltip" title="Delete">
+                                                                data-toggle="tooltip" title="{{ __('common.delete') }}">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </form>
@@ -173,16 +173,16 @@
                     @else
                         <div class="text-center py-5">
                             <i class="ri-star-line font-size-80 text-muted"></i>
-                            <h5 class="mt-3 text-muted">No favorite files yet</h5>
-                            <p class="text-muted">Star files to add them to your favorites</p>
+                            <h5 class="mt-3 text-muted">{{ __('common.no_favorite_files_yet') }}</h5>
+                            <p class="text-muted">{{ __('common.star_files_to_add_favorites') }}</p>
                         </div>
                     @endif
 
                     @if((isset($favoriteFolders) ? $favoriteFolders->count() : 0) == 0 && $files->count() == 0)
                         <div class="text-center py-5">
                             <i class="ri-star-line font-size-80 text-muted"></i>
-                            <h5 class="mt-3 text-muted">No favorites yet</h5>
-                            <p class="text-muted">Star files and folders to add them to your favorites</p>
+                            <h5 class="mt-3 text-muted">{{ __('common.no_favorites_yet') }}</h5>
+                            <p class="text-muted">{{ __('common.star_files_folders_to_add') }}</p>
                         </div>
                     @endif
                 </div>
