@@ -1,10 +1,10 @@
-# CloudBox - Hệ Thống Quản Lý File Trên Cloud
+# Cloody - Hệ Thống Quản Lý File Trên Cloud
 
 ![Laravel](https://img.shields.io/badge/Laravel-12.0-red.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-CloudBox là một ứng dụng web quản lý file và thư mục trên cloud được xây dựng bằng Laravel Framework. Ứng dụng cung cấp giao diện thân thiện và nhiều tính năng mạnh mẽ để lưu trữ, tổ chức và chia sẻ file một cách dễ dàng.
+Cloody là một ứng dụng web quản lý file và thư mục trên cloud được xây dựng bằng Laravel Framework. Ứng dụng cung cấp giao diện thân thiện và nhiều tính năng mạnh mẽ để lưu trữ, tổ chức và chia sẻ file một cách dễ dàng.
 
 ## 📋 Mục Lục
 
@@ -90,8 +90,8 @@ CloudBox là một ứng dụng web quản lý file và thư mục trên cloud �
 ### Bước 1: Clone Repository
 
 ```bash
-git clone https://github.com/pqchien1905/CloudBox.git
-cd CloudBox
+git clone https://github.com/pqchien1905/Cloody_Laravel.git
+cd Cloody_Laravel
 ```
 
 ### Bước 2: Cài Đặt Dependencies
@@ -302,7 +302,7 @@ php artisan queue:work
 ## 📁 Cấu Trúc Thư Mục
 
 ```
-cloudbox-laravel/
+cloody-laravel/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
@@ -544,8 +544,8 @@ Nếu phát hiện lỗi, vui lòng:
 ## 📞 Liên Hệ
 
 - **Developer**: pqchien1905
-- **Repository**: [https://github.com/pqchien1905/CloudBox](https://github.com/pqchien1905/CloudBox)
-- **Issues**: [https://github.com/pqchien1905/CloudBox/issues](https://github.com/pqchien1905/CloudBox/issues)
+- **Repository**: [https://github.com/pqchien1905/Cloody_Laravel](https://github.com/pqchien1905/Cloody_Laravel)
+- **Issues**: [https://github.com/pqchien1905/Cloody_Laravel/issues](https://github.com/pqchien1905/Cloody_Laravel/issues)
 
 ## 📄 Giấy Phép
 
@@ -553,6 +553,6 @@ Project này được phân phối dưới giấy phép MIT License. Xem file [L
 
 ---
 
-**CloudBox** - Quản lý file trên cloud một cách dễ dàng và an toàn! 🚀
+**Cloody** - Quản lý file trên cloud một cách dễ dàng và an toàn! 🚀
 
 Made with ❤️ by pqchien1905
