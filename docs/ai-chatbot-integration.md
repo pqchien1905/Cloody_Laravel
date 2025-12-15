@@ -2,8 +2,8 @@
 
 ## Tổng quan
 
-CloudBox đã được tích hợp một AI chatbot thông minh sử dụng Google Gemini AI. Chatbot sẽ xuất hiện ở góc phải dưới màn hình và có thể trả lời các câu hỏi về:
-- Cách sử dụng CloudBox
+Cloody đã được tích hợp một AI chatbot thông minh sử dụng Google Gemini AI. Chatbot sẽ xuất hiện ở góc phải dưới màn hình và có thể trả lời các câu hỏi về:
+- Cách sử dụng Cloody
 - Hướng dẫn tính năng
 - Giải đáp thắc mắc về lưu trữ, thanh toán
 - Gợi ý và mẹo sử dụng
@@ -65,7 +65,7 @@ Nếu đang dùng Laragon, khởi động lại Apache/Nginx.
 
 ## Cách sử dụng
 
-1. Đăng nhập vào CloudBox
+1. Đăng nhập vào Cloody
 2. Tìm biểu tượng chat (icon bong bóng chat màu tím) ở góc phải dưới màn hình
 3. Click vào icon để mở chat box
 4. Nhập câu hỏi và nhấn Enter hoặc click nút gửi
@@ -84,7 +84,7 @@ Nếu đang dùng Laragon, khởi động lại Apache/Nginx.
 
 ### AI Features
 - ✅ Hiểu tiếng Việt tự nhiên
-- ✅ Context về CloudBox và các tính năng
+- ✅ Context về Cloody và các tính năng
 - ✅ Trả lời nhanh và chính xác
 - ✅ Phong cách thân thiện, chuyên nghiệp
 
@@ -170,7 +170,7 @@ Authorization: Bearer {token}
 ```json
 {
   "success": true,
-  "response": "Để upload file vào CloudBox, bạn có thể..."
+  "response": "Để upload file vào Cloody, bạn có thể..."
 }
 ```
 

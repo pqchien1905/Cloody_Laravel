@@ -37,7 +37,7 @@
 
 Trong quá trình học tập tại trường Đại học, việc thực tập tại doanh nghiệp là một phần quan trọng giúp sinh viên tiếp cận với môi trường làm việc thực tế, áp dụng kiến thức đã học vào thực tiễn và phát triển kỹ năng nghề nghiệp.
 
-Với mong muốn được trải nghiệm và học hỏi kiến thức thực tế trong lĩnh vực phát triển phần mềm, em đã có cơ hội được thực tập tại [Tên công ty] trong [X] tuần. Trong thời gian này, em được tham gia vào dự án phát triển hệ thống CloudBox - một ứng dụng quản lý và chia sẻ tệp tin trực tuyến.
+Với mong muốn được trải nghiệm và học hỏi kiến thức thực tế trong lĩnh vực phát triển phần mềm, em đã có cơ hội được thực tập tại [Tên công ty] trong [X] tuần. Trong thời gian này, em được tham gia vào dự án phát triển hệ thống Cloody - một ứng dụng quản lý và chia sẻ tệp tin trực tuyến.
 
 Báo cáo này trình bày tổng quan về quá trình thực tập, các kiến thức và kỹ năng em đã học được, cũng như những khó khăn đã gặp phải và cách giải quyết trong suốt thời gian thực tập tại công ty.
 
@@ -102,9 +102,9 @@ Công ty tạo môi trường làm việc thân thiện, năng động và chuy�
 
 ## 4. NỘI DUNG THỰC TẬP
 
-### 4.1. Tổng quan dự án CloudBox
+### 4.1. Tổng quan dự án Cloody
 
-CloudBox là một hệ thống quản lý và chia sẻ tệp tin trực tuyến (Cloud Storage System), cho phép người dùng:
+Cloody là một hệ thống quản lý và chia sẻ tệp tin trực tuyến (Cloud Storage System), cho phép người dùng:
 - Tải lên, lưu trữ và quản lý tệp/thư mục
 - Chia sẻ tệp với người dùng khác
 - Phân quyền truy cập chi tiết
@@ -143,7 +143,7 @@ CloudBox là một hệ thống quản lý và chia sẻ tệp tin trực tuyế
 - Tài liệu nội bộ của công ty
 - Code review các dự án cũ của team
 
-#### 4.2.3. Cài đặt và chạy dự án CloudBox
+#### 4.2.3. Cài đặt và chạy dự án Cloody
 
 - Clone source code từ repository
 - Cấu hình file `.env` (database, mail, storage...)
@@ -866,7 +866,7 @@ Thời gian thực tập tại [Tên công ty] là một trải nghiệm vô cù
 
 - **Về kỹ năng:** Em đã cải thiện đáng kể kỹ năng coding, debug, làm việc nhóm, giao tiếp và quản lý thời gian.
 
-- **Về sản phẩm:** Em đã đóng góp vào việc phát triển hệ thống CloudBox với nhiều modules quan trọng và các chức năng hoạt động ổn định.
+- **Về sản phẩm:** Em đã đóng góp vào việc phát triển hệ thống Cloody với nhiều modules quan trọng và các chức năng hoạt động ổn định.
 
 - **Về định hướng:** Thực tập giúp em xác định rõ hơn con đường sự nghiệp và những gì cần học để phát triển trong tương lai.
 
@@ -942,7 +942,7 @@ Một lần nữa, em xin chân thành cảm ơn!
 
 ### 10.5. Tài liệu nội bộ công ty
 
-- CloudBox Project Documentation
+- Cloody Project Documentation
 - Coding Standards và Best Practices
 - Git Workflow Guidelines
 - Development Environment Setup Guide
@@ -982,7 +982,7 @@ Một lần nữa, em xin chân thành cảm ơn!
 
 ```bash
 # Sample commits
-5277d9b - Add CloudBox documentation and update features
+5277d9b - Add Cloody documentation and update features
 abc1234 - Implement file sharing feature
 def5678 - Add user profile management
 ghi9012 - Fix upload file size limit issue

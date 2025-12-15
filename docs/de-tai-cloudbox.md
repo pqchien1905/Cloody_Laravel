@@ -1,8 +1,8 @@
-# CloudBox — Giới thiệu và Phân tích đề tài
+# Cloody — Giới thiệu và Phân tích đề tài
 
 ## 1. Giới thiệu về đề tài
 
-CloudBox là một ứng dụng web giúp người dùng lưu trữ, quản lý và chia sẻ tệp/thư mục trên nền tảng đám mây, tương tự các dịch vụ như Google Drive hay Dropbox nhưng phù hợp để triển khai nội bộ hoặc tuỳ biến theo nhu cầu doanh nghiệp.
+Cloody là một ứng dụng web giúp người dùng lưu trữ, quản lý và chia sẻ tệp/thư mục trên nền tảng đám mây, tương tự các dịch vụ như Google Drive hay Dropbox nhưng phù hợp để triển khai nội bộ hoặc tuỳ biến theo nhu cầu doanh nghiệp.
 
 - Bối cảnh: Nhu cầu làm việc từ xa và cộng tác tăng cao, dữ liệu cần được tổ chức khoa học, an toàn và dễ chia sẻ.
 - Mục tiêu: Xây dựng hệ thống quản lý tệp/thư mục thân thiện, bảo mật, hỗ trợ phân quyền chia sẻ, đánh dấu yêu thích, xoá mềm (thùng rác) và cấu hình riêng tư theo thư mục.
@@ -120,4 +120,4 @@ Lưu ý: Trường cụ thể tuân theo các migration trong thư mục `databa
 
 ---
 
-Tài liệu này nhằm định hướng tổng thể cho việc triển khai CloudBox trong dự án hiện tại. Có thể bổ sung chi tiết kỹ thuật (API, schema trường cụ thể, ma trận quyền) khi chốt thiết kế cuối.
+Tài liệu này nhằm định hướng tổng thể cho việc triển khai Cloody trong dự án hiện tại. Có thể bổ sung chi tiết kỹ thuật (API, schema trường cụ thể, ma trận quyền) khi chốt thiết kế cuối.
