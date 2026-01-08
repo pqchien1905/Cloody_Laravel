@@ -1,2 +1,2 @@
-web: php artisan config:cache && php artisan route:cache && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
-worker: php artisan queue:work --verbose --tries=3 --timeout=90
+web: php artisan migrate --force && php artisan optimize && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+worker: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
