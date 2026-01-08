@@ -228,7 +228,7 @@
                                                                 {{ $file->is_favorite ? __('common.remove_from_favorites') : __('common.add_to_favorites') }}
                                                             </button>
                                                         </form>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#shareFileModal{{ $file->id }}" onclick="event.preventDefault();">
+                                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); shareManager.openShareModal({{ $file->id }}, 'file');">
                                                             <i class="ri-share-line mr-2"></i>{{ __('common.share') }}
                                                         </a>
                                                         <a class="dropdown-item" href="{{ route('cloody.files.download', $file->id) }}">

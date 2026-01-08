@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
+
+use App\Http\Controllers\Controller;
 
 use App\Models\Folder;
 use App\Models\File;
@@ -695,5 +697,82 @@ class FolderController extends Controller
             : __('common.folder_removed_from_favorites');
 
         return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Download folder as ZIP (for owner).
+     */
+    public function download($id)
+    {
+        $folder = Folder::with([
+                'files' => function($query) {
+                    $query->where('is_trash', false);
+                },
+                'subfolders' => function($query) {
+                    $query->where('is_trash', false)
+                          ->with(['files' => function($q) {
+                              $q->where('is_trash', false);
+                          }]);
+                }
+            ])
+            ->where('user_id', Auth::id())
+            ->where('id', $id)
+            ->firstOrFail();
+
+        // Tạo file ZIP tạm thời
+        $safeFolderName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $folder->name);
+        $zipFileName = $safeFolderName . '_' . time() . '.zip';
+        $zipPath = storage_path('app/temp/' . $zipFileName);
+        
+        // Đảm bảo thư mục temp tồn tại
+        if (!file_exists(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+
+        $zip = new \ZipArchive();
+        $zipOpened = $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        
+        if ($zipOpened !== TRUE) {
+            abort(500, 'Không thể tạo file ZIP');
+        }
+        
+        $filesAdded = 0;
+        
+        // Thêm các file trong thư mục chính
+        foreach ($folder->files as $file) {
+            $filePath = storage_path('app/public/' . $file->path);
+            
+            if (file_exists($filePath)) {
+                $added = $zip->addFile($filePath, $file->original_name);
+                if ($added) {
+                    $filesAdded++;
+                }
+            }
+        }
+        
+        // Thêm các file trong thư mục con
+        foreach ($folder->subfolders as $subfolder) {
+            foreach ($subfolder->files as $file) {
+                $filePath = storage_path('app/public/' . $file->path);
+                
+                if (file_exists($filePath)) {
+                    $added = $zip->addFile($filePath, $subfolder->name . '/' . $file->original_name);
+                    if ($added) {
+                        $filesAdded++;
+                    }
+                }
+            }
+        }
+        
+        $zip->close();
+
+        if ($filesAdded === 0) {
+            @unlink($zipPath);
+            return redirect()->back()->with('error', 'Thư mục không có file để tải xuống');
+        }
+
+        $downloadName = $folder->name . '_' . time() . '.zip';
+        
+        return response()->download($zipPath, $downloadName)->deleteFileAfterSend(true);
     }
 }

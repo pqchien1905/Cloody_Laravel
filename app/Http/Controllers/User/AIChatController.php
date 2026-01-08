@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -22,7 +24,9 @@ class AIChatController extends Controller
         $userMessage = $validated['message'];
         $history = $validated['history'] ?? [];
         $pageContext = $validated['context'] ?? '';
-        $geminiKey = env('GEMINI_API_KEY');
+        $llmMuxBaseUrl = env('LLM_MUX_BASE_URL', 'http://localhost:8317/v1');
+        $llmMuxApiKey = env('LLM_MUX_API_KEY', 'unused');
+        $llmMuxModel = env('LLM_MUX_MODEL', 'gemini-2.5-flash');
 
         try {
             $systemContext = $this->buildSystemContext();
@@ -31,24 +35,22 @@ class AIChatController extends Controller
             }
             
 
-            // --- Try Gemini first if key is available ---
-            $geminiError = null;
-            if ($geminiKey) {
-                $geminiReply = $this->callGemini($geminiKey, $systemContext, $history, $userMessage);
-                if ($geminiReply['success']) {
+            // --- Call LLM via llm-mux ---
+            $llmError = null;
+            if ($llmMuxBaseUrl) {
+                $llmReply = $this->callLLM($llmMuxBaseUrl, $llmMuxApiKey, $llmMuxModel, $systemContext, $history, $userMessage);
+                if ($llmReply['success']) {
                     return response()->json([
                         'success' => true,
-                        'reply' => $geminiReply['reply'],
+                        'reply' => $llmReply['reply'],
                         'message' => null
                     ], 200);
                 }
-                    $geminiError = $geminiReply['message'];
+                $llmError = $llmReply['message'];
             }
 
-
-
-            // Prefer Gemini error, else DeepSeek error, else generic
-                $errorMsg = $geminiError ?? 'AI không trả về kết quả phù hợp.';
+            // Return error if LLM call failed
+            $errorMsg = $llmError ?? 'AI không trả về kết quả phù hợp.';
             return response()->json([
                 'success' => false,
                 'reply' => null,
@@ -122,78 +124,63 @@ class AIChatController extends Controller
     }
 
     /**
-     * Gọi Gemini
+     * Call LLM via llm-mux (OpenAI-compatible)
      */
-    private function callGemini(string $apiKey, string $systemContext, array $history, string $userMessage): array
+    private function callLLM(string $baseUrl, string $apiKey, string $model, string $systemContext, array $history, string $userMessage): array
     {
-        $contents = [];
+        // Build messages array in OpenAI format
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => $systemContext
+            ]
+        ];
+
+        // Add conversation history
         foreach (array_slice($history, -10) as $msg) {
             if (isset($msg['role']) && isset($msg['text'])) {
-                $contents[] = [
-                    'role' => $msg['role'] === 'user' ? 'user' : 'model',
-                    'parts' => [ ['text' => $msg['text']] ]
+                $messages[] = [
+                    'role' => $msg['role'], // 'user' or 'assistant'
+                    'content' => $msg['text']
                 ];
             }
         }
 
-        $contents[] = [
+        // Add current user message
+        $messages[] = [
             'role' => 'user',
-            'parts' => [['text' => $userMessage]]
+            'content' => $userMessage
         ];
 
+        // OpenAI-compatible payload
         $payload = [
-            'system_instruction' => [
-                'parts' => [
-                    ['text' => $systemContext]
-                ]
-            ],
-            'contents' => $contents,
-            'generationConfig' => [
-                'temperature' => 0.7,
-                'topK' => 40,
-                'topP' => 0.95,
-                'maxOutputTokens' => 2048,
-            ],
-            'safetySettings' => [
-                [
-                    'category' => 'HARM_CATEGORY_HARASSMENT',
-                    'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
-                ],
-                [
-                    'category' => 'HARM_CATEGORY_HATE_SPEECH',
-                    'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
-                ],
-                [
-                    'category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-                    'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
-                ],
-                [
-                    'category' => 'HARM_CATEGORY_DANGEROUS_CONTENT',
-                    'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
-                ]
-            ]
+            'model' => $model,
+            'messages' => $messages,
+            'temperature' => 0.7,
+            'max_tokens' => 2048,
         ];
 
         $response = Http::timeout(30)
             ->withHeaders([
                 'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $apiKey,
             ])
             ->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}",
+                rtrim($baseUrl, '/') . '/chat/completions',
                 $payload
             );
 
-        if ($response->successful() && isset($response['candidates'][0]['content']['parts'][0]['text'])) {
+        if ($response->successful() && isset($response['choices'][0]['message']['content'])) {
             return [
                 'success' => true,
-                'reply' => $response['candidates'][0]['content']['parts'][0]['text'],
+                'reply' => $response['choices'][0]['message']['content'],
                 'message' => null,
             ];
         }
 
         $errorMsg = $response->json('error.message') ?? 'AI không trả về kết quả phù hợp.';
         if ($this->isQuotaError($response->status(), $errorMsg)) {
-            $errorMsg = 'Hệ thống AI (Gemini) đang quá tải hoặc đã vượt hạn mức. Vui lòng thử lại sau vài phút.';
+            $errorMsg = 'Hệ thống AI đang quá tải hoặc đã vượt hạn mức. Vui lòng thử lại sau vài phút.';
         }
 
         return [

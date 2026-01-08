@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Model Payment - Quản lý thông tin giao dịch thanh toán
- * 
+ *
  * @property int $id
  * @property int $user_id
  * @property int|null $subscription_id
@@ -32,6 +32,39 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string|null $notes
  * @property-read User $user
  * @property-read Subscription|null $subscription
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static Builder<static>|Payment byBillingCycle(string $billingCycle)
+ * @method static Builder<static>|Payment byPaymentMethod(string $method)
+ * @method static Builder<static>|Payment byPlan(string $planId)
+ * @method static Builder<static>|Payment byUser(int $userId)
+ * @method static Builder<static>|Payment completed()
+ * @method static Builder<static>|Payment failed()
+ * @method static Builder<static>|Payment newModelQuery()
+ * @method static Builder<static>|Payment newQuery()
+ * @method static Builder<static>|Payment pending()
+ * @method static Builder<static>|Payment processing()
+ * @method static Builder<static>|Payment query()
+ * @method static Builder<static>|Payment recent(int $days = 30)
+ * @method static Builder<static>|Payment whereAmount($value)
+ * @method static Builder<static>|Payment whereBillingCycle($value)
+ * @method static Builder<static>|Payment whereCreatedAt($value)
+ * @method static Builder<static>|Payment whereCurrency($value)
+ * @method static Builder<static>|Payment whereId($value)
+ * @method static Builder<static>|Payment whereNotes($value)
+ * @method static Builder<static>|Payment wherePaidAt($value)
+ * @method static Builder<static>|Payment wherePaymentMethod($value)
+ * @method static Builder<static>|Payment wherePaymentStatus($value)
+ * @method static Builder<static>|Payment wherePlanId($value)
+ * @method static Builder<static>|Payment wherePlanName($value)
+ * @method static Builder<static>|Payment whereStorageGb($value)
+ * @method static Builder<static>|Payment whereSubscriptionId($value)
+ * @method static Builder<static>|Payment whereTransactionId($value)
+ * @method static Builder<static>|Payment whereUpdatedAt($value)
+ * @method static Builder<static>|Payment whereUserId($value)
+ * @method static Builder<static>|Payment whereVnpayResponse($value)
+ * @method static Builder<static>|Payment whereVnpayTxnRef($value)
+ * @mixin \Eloquent
  */
 class Payment extends Model
 {

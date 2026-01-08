@@ -624,13 +624,12 @@
     <!-- App JavaScript -->
     <script src="{{ asset('assets/js/app.js') }}"></script>
     
-    <!-- Load empty files with cache busting (share-modal-fix.js already handles protection) -->
-    <script src="{{ asset('assets/js/share-modal.js') }}?v={{ time() }}&nocache={{ uniqid() }}"></script>
-    <script src="{{ asset('assets/js/reload.js') }}?v={{ time() }}&nocache={{ uniqid() }}"></script>
-    
     <!-- AI Chat Widget -->
     @include('components.ai-chat-widget')
     <script src="{{ asset('assets/js/ai-chat.js') }}?v={{ time() }}"></script>
+    
+    <!-- Share Modals (includes inline JavaScript) -->
+    @include('components.share-modals')
     
     @stack('scripts')
 </body>

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Model StoragePlan - Quản lý thông tin gói lưu trữ
- * 
+ *
  * @property int $id
  * @property string $plan_id
  * @property string $name
@@ -19,6 +19,26 @@ use Illuminate\Database\Eloquent\Builder;
  * @property bool $is_active
  * @property bool $is_popular
  * @property int $sort_order
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static Builder<static>|StoragePlan active()
+ * @method static Builder<static>|StoragePlan newModelQuery()
+ * @method static Builder<static>|StoragePlan newQuery()
+ * @method static Builder<static>|StoragePlan ordered()
+ * @method static Builder<static>|StoragePlan query()
+ * @method static Builder<static>|StoragePlan whereCreatedAt($value)
+ * @method static Builder<static>|StoragePlan whereFeatures($value)
+ * @method static Builder<static>|StoragePlan whereId($value)
+ * @method static Builder<static>|StoragePlan whereIsActive($value)
+ * @method static Builder<static>|StoragePlan whereIsPopular($value)
+ * @method static Builder<static>|StoragePlan whereName($value)
+ * @method static Builder<static>|StoragePlan wherePlanId($value)
+ * @method static Builder<static>|StoragePlan wherePriceMonthly($value)
+ * @method static Builder<static>|StoragePlan wherePriceYearly($value)
+ * @method static Builder<static>|StoragePlan whereSortOrder($value)
+ * @method static Builder<static>|StoragePlan whereStorageGb($value)
+ * @method static Builder<static>|StoragePlan whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class StoragePlan extends Model
 {

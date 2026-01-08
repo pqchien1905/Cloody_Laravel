@@ -8,6 +8,51 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Model File - Quản lý thông tin file trong hệ thống
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int|null $folder_id
+ * @property string $name
+ * @property string $original_name
+ * @property string $path
+ * @property string $mime_type
+ * @property string $extension
+ * @property int $size
+ * @property bool $is_favorite
+ * @property bool $is_trash
+ * @property \Illuminate\Support\Carbon|null $trashed_at
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Folder|null $folder
+ * @property-read string $formatted_size
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $groups
+ * @property-read int|null $groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FileShare> $shares
+ * @property-read int|null $shares_count
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File favorites()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File trashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereExtension($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereFolderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereIsFavorite($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereIsTrash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereMimeType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereOriginalName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File wherePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereSize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereTrashedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|File whereUserId($value)
+ * @mixin \Eloquent
  */
 class File extends Model
 {

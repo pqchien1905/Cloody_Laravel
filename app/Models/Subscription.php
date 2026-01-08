@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Model Subscription - Quản lý thông tin gói đăng ký lưu trữ của người dùng
- * 
+ *
  * @property int $id
  * @property int $user_id
  * @property string $plan_id
@@ -24,6 +24,35 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $payment_status
  * @property string|null $notes
  * @property-read User $user
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
+ * @property-read int|null $payments_count
+ * @method static Builder<static>|Subscription active()
+ * @method static Builder<static>|Subscription byBillingCycle(string $billingCycle)
+ * @method static Builder<static>|Subscription byPlan(string $planId)
+ * @method static Builder<static>|Subscription byUser(int $userId)
+ * @method static Builder<static>|Subscription expired()
+ * @method static Builder<static>|Subscription expiringSoon(int $days = 7)
+ * @method static Builder<static>|Subscription newModelQuery()
+ * @method static Builder<static>|Subscription newQuery()
+ * @method static Builder<static>|Subscription query()
+ * @method static Builder<static>|Subscription valid()
+ * @method static Builder<static>|Subscription whereBillingCycle($value)
+ * @method static Builder<static>|Subscription whereCreatedAt($value)
+ * @method static Builder<static>|Subscription whereExpiresAt($value)
+ * @method static Builder<static>|Subscription whereId($value)
+ * @method static Builder<static>|Subscription whereIsActive($value)
+ * @method static Builder<static>|Subscription whereNotes($value)
+ * @method static Builder<static>|Subscription wherePaymentStatus($value)
+ * @method static Builder<static>|Subscription wherePlanId($value)
+ * @method static Builder<static>|Subscription wherePlanName($value)
+ * @method static Builder<static>|Subscription wherePrice($value)
+ * @method static Builder<static>|Subscription whereStartsAt($value)
+ * @method static Builder<static>|Subscription whereStorageGb($value)
+ * @method static Builder<static>|Subscription whereUpdatedAt($value)
+ * @method static Builder<static>|Subscription whereUserId($value)
+ * @mixin \Eloquent
  */
 class Subscription extends Model
 {

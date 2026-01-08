@@ -8,6 +8,35 @@ use Illuminate\Support\Str;
 
 /**
  * Model FolderShare - Quản lý việc chia sẻ thư mục giữa các người dùng
+ *
+ * @property int $id
+ * @property int $folder_id
+ * @property int $shared_by
+ * @property int|null $shared_with
+ * @property string $share_token
+ * @property string $permission
+ * @property bool $is_public
+ * @property \Illuminate\Support\Carbon|null $expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Folder $folder
+ * @property-read \App\Models\User $sharedBy
+ * @property-read \App\Models\User|null $sharedWith
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereFolderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereIsPublic($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare wherePermission($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereShareToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereSharedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereSharedWith($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FolderShare whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class FolderShare extends Model
 {

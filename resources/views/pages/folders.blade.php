@@ -222,10 +222,10 @@
                                                                 {{ $folder->is_favorite ? __('common.remove_from_favorites') : __('common.add_to_favorites') }}
                                                             </button>
                                                         </form>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#shareFolderModal{{ $folder->id }}" onclick="event.preventDefault();">
+                                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); event.stopPropagation(); shareManager.openShareModal({{ $folder->id }}, 'folder');">
                                                             <i class="ri-share-line mr-2"></i>{{ __('common.share') }}
                                                         </a>
-                                                        <a class="dropdown-item" href="#" onclick="event.preventDefault();">
+                                                        <a class="dropdown-item" href="{{ route('cloody.folders.download', $folder->id) }}">
                                                             <i class="ri-file-download-fill mr-2"></i>{{ __('common.download') }}
                                                         </a>
                                                         <div class="dropdown-divider"></div>

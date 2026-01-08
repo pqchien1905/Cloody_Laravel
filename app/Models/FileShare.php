@@ -8,6 +8,35 @@ use Illuminate\Support\Str;
 
 /**
  * Model FileShare - Quản lý việc chia sẻ file giữa các người dùng
+ *
+ * @property int $id
+ * @property int $file_id
+ * @property int $shared_by
+ * @property int|null $shared_with
+ * @property string $share_token
+ * @property string $permission
+ * @property bool $is_public
+ * @property \Illuminate\Support\Carbon|null $expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\File $file
+ * @property-read \App\Models\User $sharedBy
+ * @property-read \App\Models\User|null $sharedWith
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereFileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereIsPublic($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare wherePermission($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereShareToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereSharedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereSharedWith($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FileShare whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class FileShare extends Model
 {

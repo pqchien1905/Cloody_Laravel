@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,33 +23,35 @@ Route::middleware('auth')->group(function () {
 });
 
 // Avatar serving routes (public access for images)
-use App\Http\Controllers\AvatarController;
+use App\Http\Controllers\User\AvatarController;
 Route::get('/avatars/user/{id}', [AvatarController::class, 'user'])->name('avatar.user');
 Route::get('/avatars/group/{id}', [AvatarController::class, 'group'])->name('avatar.group');
 
-// Các route Cloody
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FileController;
-use App\Http\Controllers\FileUploadController;
-use App\Http\Controllers\FolderController;
-use App\Http\Controllers\FileShareController;
-use App\Http\Controllers\FolderShareController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AdminUsersController;
-use App\Http\Controllers\AdminCategoriesController;
-use App\Http\Controllers\AdminFilesController;
-use App\Http\Controllers\AdminFoldersController;
-use App\Http\Controllers\AdminGroupsController;
-use App\Http\Controllers\AdminSharesController;
-use App\Http\Controllers\AdminReportsController;
-use App\Http\Controllers\AdminFavoritesController;
-use App\Http\Controllers\UserProfileController;
-use App\Http\Controllers\GroupController;
-use App\Http\Controllers\LocaleController;
-use App\Http\Controllers\StoragePlansController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\AdminStoragePlansController;
-use App\Http\Controllers\AIChatController;
+// Các route Cloody - User Controllers
+use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\FileController;
+use App\Http\Controllers\User\FileUploadController;
+use App\Http\Controllers\User\FolderController;
+use App\Http\Controllers\User\FileShareController;
+use App\Http\Controllers\User\FolderShareController;
+use App\Http\Controllers\User\UserProfileController;
+use App\Http\Controllers\User\GroupController;
+use App\Http\Controllers\User\LocaleController;
+use App\Http\Controllers\User\StoragePlansController;
+use App\Http\Controllers\User\PaymentController;
+use App\Http\Controllers\User\AIChatController;
+
+// Các route Admin Controllers
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\Admin\AdminCategoriesController;
+use App\Http\Controllers\Admin\AdminFilesController;
+use App\Http\Controllers\Admin\AdminFoldersController;
+use App\Http\Controllers\Admin\AdminGroupsController;
+use App\Http\Controllers\Admin\AdminSharesController;
+use App\Http\Controllers\Admin\AdminReportsController;
+use App\Http\Controllers\Admin\AdminFavoritesController;
+use App\Http\Controllers\Admin\AdminStoragePlansController;
 
 // AI Chat route (yêu cầu đăng nhập)
 Route::middleware(['auth'])->post('/ai-chat', [AIChatController::class, 'chat'])->name('ai.chat');
@@ -93,6 +95,7 @@ Route::middleware(['auth'])->prefix('cloody')->group(function () {
     Route::post('/folders/check-duplicates', [FolderController::class, 'checkDuplicateFolders'])->name('cloody.folders.check-duplicates');
     Route::post('/folders/bulk-delete', [FolderController::class, 'bulkDelete'])->name('cloody.folders.bulk-delete');
     Route::get('/folders/{id}', [FolderController::class, 'show'])->name('cloody.folders.show');
+    Route::get('/folders/{id}/download', [FolderController::class, 'download'])->name('cloody.folders.download');
     Route::get('/folders/{id}/files', [FolderController::class, 'getFiles'])->name('cloody.folders.files');
     Route::get('/folders/{id}/edit', [FolderController::class, 'edit'])->name('cloody.folders.edit');
     Route::post('/folders', [FolderController::class, 'store'])->name('cloody.folders.store');
@@ -101,15 +104,16 @@ Route::middleware(['auth'])->prefix('cloody')->group(function () {
     Route::post('/folders/{id}/restore', [FolderController::class, 'restore'])->name('cloody.folders.restore');
     Route::delete('/folders/{id}/force', [FolderController::class, 'forceDelete'])->name('cloody.folders.force-delete');
     Route::post('/folders/{id}/favorite', [FolderController::class, 'toggleFavorite'])->name('cloody.folders.favorite');
-    // Chia sẻ thư mục
-    Route::post('/folders/{id}/share', [FolderShareController::class, 'store'])->name('cloody.folders.share');
-
+    
     // Chia sẻ tệp
     Route::post('/files/{id}/share', [FileShareController::class, 'store'])->name('cloody.files.share');
     Route::get('/files/{id}/shares', [FileShareController::class, 'listShares'])->name('cloody.files.shares.list');
+    Route::get('/shares/all', [FileShareController::class, 'getAllShares'])->name('cloody.shares.all');
     Route::delete('/shares/{id}', [FileShareController::class, 'destroy'])->name('cloody.shares.revoke');
     
-    // Trang người dùng
+    // Chia sẻ thư mục
+    Route::post('/folders/{id}/share', [FolderShareController::class, 'store'])->name('cloody.folders.share');
+    Route::get('/folders/{id}/shares', [FolderShareController::class, 'listShares'])->name('cloody.folders.shares.list');
     Route::get('/user/profile', [UserProfileController::class, 'index'])->name('cloody.user.profile');
     Route::get('/users', function () { return view('pages.user.list'); })->name('cloody.user.list');
     Route::get('/users/add', function () { return view('pages.user.add'); })->name('cloody.user.add');
@@ -220,7 +224,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->as('admin.')->group(funct
 });
 
 // Liên kết chia sẻ công khai (không yêu cầu đăng nhập)
-Route::get('/shared/{token}', [FileShareController::class, 'show'])->name('file.shared');
-Route::get('/shared/{token}/download', [FileShareController::class, 'download'])->name('file.shared.download');
+// File shares
+Route::get('/shared/file/{token}', [FileShareController::class, 'show'])->name('file.shared');
+Route::get('/shared/file/{token}/view', [FileShareController::class, 'view'])->name('file.shared.view');
+Route::get('/shared/file/{token}/download', [FileShareController::class, 'download'])->name('file.shared.download');
+
+// Folder shares
+Route::get('/shared/folder/{token}', [FolderShareController::class, 'show'])->name('folder.shared');
+Route::get('/shared/folder/{token}/download', [FolderShareController::class, 'download'])->name('folder.shared.download');
 
 require __DIR__.'/auth.php';

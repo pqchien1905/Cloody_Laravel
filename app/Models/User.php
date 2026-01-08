@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Model User - Quản lý thông tin người dùng
- * 
+ *
  * @property int $id
  * @property string $name
  * @property string $email
@@ -25,6 +25,47 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Group> $ownedGroups
  * @property-read \Illuminate\Database\Eloquent\Collection<int, File> $files
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Folder> $folders
+ * @method float getStorageLimitGB()
+ * @method int getStorageLimitBytes()
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string $password
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Subscription|null $activeSubscription
+ * @property-read int|null $files_count
+ * @property-read int|null $folders_count
+ * @property-read string|null $avatar_url
+ * @property-read int|null $groups_count
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read int|null $owned_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
+ * @property-read int|null $payments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FileShare> $receivedShares
+ * @property-read int|null $received_shares_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FileShare> $sharedFiles
+ * @property-read int|null $shared_files_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Subscription> $subscriptions
+ * @property-read int|null $subscriptions_count
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereBio($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsAdmin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
@@ -177,12 +218,12 @@ class User extends Authenticatable
      */
     public function getStorageLimitGB(): float
     {
-        $subscription = $this->activeSubscription;
+        $subscription = $this->activeSubscription()->first();
         if ($subscription && $subscription->isValid()) {
             return $subscription->storage_gb;
         }
         // Mặc định 1GB cho gói miễn phí
-        return 1;
+        return 1.0;
     }
 
     /**

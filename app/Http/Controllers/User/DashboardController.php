@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\File;
@@ -37,6 +39,7 @@ class DashboardController extends Controller
             ->sum('size');
         
         // Lấy giới hạn lưu trữ từ gói đăng ký của người dùng
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         $storageLimit = $user->getStorageLimitGB();
             

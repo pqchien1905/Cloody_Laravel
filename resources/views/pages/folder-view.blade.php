@@ -141,7 +141,7 @@
                                                                 {{ $subfolder->is_favorite ? 'Remove from Favorites' : 'Add to Favorites' }}
                                                             </button>
                                                         </form>
-                                                        <a class="dropdown-item" href="#" onclick="event.preventDefault();">
+                                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); shareManager.openShareModal({{ $subfolder->id }}, 'folder');">
                                                             <i class="ri-share-line mr-2"></i>Share
                                                         </a>
                                                         <a class="dropdown-item" href="#" onclick="event.preventDefault();">
@@ -316,7 +316,7 @@
                                                                 {{ $file->is_favorite ? 'Remove from Favorites' : 'Add to Favorites' }}
                                                             </button>
                                                         </form>
-                                                        <a class="dropdown-item" href="#" onclick="event.preventDefault();">
+                                                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); shareManager.openShareModal({{ $file->id }}, 'file');">
                                                             <i class="ri-share-line mr-2"></i>Share
                                                         </a>
                                                         <a class="dropdown-item" href="{{ route('cloody.files.download', $file->id) }}">
